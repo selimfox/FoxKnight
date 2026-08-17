@@ -160,7 +160,8 @@ func _update_aim(target_position: Vector2) -> void:
 			effective_radius,
 			arc_direction_deadzone_radius,
 			_aim_direction,
-			_aim_distance
+			_aim_distance,
+			slash_form_distance_threshold
 		)
 		return
 
@@ -172,7 +173,12 @@ func _update_aim(target_position: Vector2) -> void:
 		_prepared_slash.distance
 	)
 	var effective_width := _prepared_slash.width * _prepared_slash.hitbox_tolerance_multiplier
-	_player.update_straight_aim_preview(_aim_direction, _aim_distance, effective_width)
+	_player.update_straight_aim_preview(
+		_aim_direction,
+		_aim_distance,
+		effective_width,
+		slash_form_distance_threshold
+	)
 
 
 func _calculate_allowed_slash_distance(origin: Vector2, direction: Vector2, maximum_distance: float) -> float:
@@ -267,6 +273,30 @@ func get_aim_preview_radius() -> float:
 
 func get_aim_preview_deadzone_radius() -> float:
 	return _player.get_aim_preview_deadzone_radius()
+
+
+func get_aim_form_threshold_radius() -> float:
+	return _player.get_aim_form_threshold_radius()
+
+
+func is_aim_form_threshold_visible() -> bool:
+	return _player.is_aim_form_threshold_visible()
+
+
+func is_form_switch_flash_visible() -> bool:
+	return _player.is_form_switch_flash_visible()
+
+
+func get_form_switch_feedback_count() -> int:
+	return _player.get_form_switch_feedback_count()
+
+
+func has_form_switch_audio_stream() -> bool:
+	return _player.has_form_switch_audio_stream()
+
+
+func get_aim_preview_visual_language() -> String:
+	return _player.get_aim_preview_visual_language()
 
 
 func is_aim_direction_arrow_visible() -> bool:

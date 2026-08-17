@@ -24,6 +24,7 @@ enum SlashMode {
 var _arc_visual_active := false
 var _arc_visual_radius := 0.0
 var _arc_visual_progress := 0.0
+var _execution_visual_language := "NONE"
 
 
 func execute(
@@ -64,7 +65,7 @@ func _execute_straight(
 	var tween := create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(player, "global_position", target, duration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tween.tween_property(_visual, "modulate", Color(1.0, 0.96, 0.72, 0.0), duration).set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(_visual, "modulate", Color(0.62, 0.95, 1.0, 0.0), duration).set_trans(Tween.TRANS_QUAD)
 	await tween.finished
 	finished.emit(hit_count)
 	queue_free()
@@ -174,7 +175,9 @@ func _query_enemies(player: PlayerController, query_shape: Shape2D, query_transf
 
 func _configure_straight_visual(actual_distance: float) -> void:
 	_arc_visual_active = false
+	_execution_visual_language = "COOL_STRAIGHT"
 	_visual.visible = true
+	_visual.modulate = Color(0.62, 0.95, 1.0, 0.96)
 	var texture_size := _visual.texture.get_size()
 	_visual.position = Vector2(actual_distance * 0.5, 0.0)
 	_visual.scale = Vector2(actual_distance / texture_size.x, width / texture_size.y)
@@ -187,6 +190,7 @@ func _configure_straight_visual(actual_distance: float) -> void:
 		Vector2(0.0, debug_half_width),
 		Vector2(0.0, -debug_half_width),
 	])
+	_debug_line.default_color = Color(0.25, 0.82, 1.0, 0.95)
 	_debug_line.visible = show_slash_hitbox or not is_equal_approx(hitbox_tolerance_multiplier, 1.0)
 	queue_redraw()
 
@@ -194,9 +198,11 @@ func _configure_straight_visual(actual_distance: float) -> void:
 func _configure_arc_visual(actual_radius: float) -> void:
 	_visual.visible = false
 	_arc_visual_active = true
+	_execution_visual_language = "WARM_ARC"
 	_arc_visual_radius = actual_radius
 	_arc_visual_progress = 0.0
 	_debug_line.points = _build_circle_outline(actual_radius)
+	_debug_line.default_color = Color(1.0, 0.58, 0.14, 0.95)
 	_debug_line.visible = show_slash_hitbox or not is_equal_approx(hitbox_tolerance_multiplier, 1.0)
 	queue_redraw()
 
@@ -228,3 +234,7 @@ func is_arc_visual_active() -> bool:
 
 func get_arc_visual_radius() -> float:
 	return _arc_visual_radius
+
+
+func get_execution_visual_language() -> String:
+	return _execution_visual_language

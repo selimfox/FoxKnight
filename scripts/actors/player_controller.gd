@@ -1,6 +1,18 @@
 class_name PlayerController
 extends CharacterBody2D
 
+const ARC_FILL_COLOR := Color(1.0, 0.44, 0.08, 0.20)
+const ARC_LINE_COLOR := Color(1.0, 0.78, 0.22, 0.96)
+const ARC_OUTLINE_COLOR := Color(1.0, 0.58, 0.14, 0.92)
+const ARC_DEADZONE_COLOR := Color(1.0, 0.42, 0.08, 0.74)
+const STRAIGHT_FILL_COLOR := Color(0.10, 0.72, 1.0, 0.18)
+const STRAIGHT_LINE_COLOR := Color(0.62, 0.95, 1.0, 0.96)
+const STRAIGHT_OUTLINE_COLOR := Color(0.25, 0.82, 1.0, 0.92)
+const FORM_THRESHOLD_MIN_ALPHA := 0.18
+const FORM_THRESHOLD_MAX_ALPHA := 0.34
+const FORM_THRESHOLD_BREATH_PERIOD := 1.6
+const FORM_SWITCH_FLASH_DURATION := 0.18
+
 signal aim_started(target_position: Vector2)
 signal aim_released(target_position: Vector2)
 signal aim_cancel_requested
@@ -25,8 +37,14 @@ var _preview_distance := 0.0
 var _preview_width := 0.0
 var _preview_radius := 0.0
 var _preview_deadzone_radius := 0.0
+var _preview_form_threshold_radius := 0.0
 var _preview_mode := "NONE"
+var _preview_visual_language := "NONE"
+var _form_threshold_visual_language := "NONE"
+var _form_threshold_breath_elapsed := 0.0
 var _last_attack_pose := "NONE"
+var _form_switch_feedback_count := 0
+var _form_switch_tween: Tween
 
 @onready var _visual: Node2D = $Visual
 @onready var _sprite: Sprite2D = $Visual/Sprite
@@ -35,6 +53,9 @@ var _last_attack_pose := "NONE"
 @onready var _aim_preview_center: Line2D = $AimPreview/CenterLine
 @onready var _aim_preview_outline: Line2D = $AimPreview/Outline
 @onready var _aim_preview_deadzone: Line2D = $AimPreview/DeadzoneOutline
+@onready var _aim_preview_form_threshold: Line2D = $AimPreview/FormThresholdOutline
+@onready var _aim_preview_form_switch_flash: Line2D = $AimPreview/FormSwitchFlash
+@onready var _form_switch_audio: AudioStreamPlayer = $FormSwitchAudio
 
 
 func _ready() -> void:
@@ -62,6 +83,23 @@ func _physics_process(delta: float) -> void:
 		_set_movement_texture(false)
 
 	move_and_slide()
+
+
+func _process(delta: float) -> void:
+	if not _aim_preview_form_threshold.visible:
+		return
+
+	_form_threshold_breath_elapsed = fmod(
+		_form_threshold_breath_elapsed + delta,
+		FORM_THRESHOLD_BREATH_PERIOD
+	)
+	var breath_phase := _form_threshold_breath_elapsed / FORM_THRESHOLD_BREATH_PERIOD * TAU - PI * 0.5
+	var breath_weight := (sin(breath_phase) + 1.0) * 0.5
+	_aim_preview_form_threshold.modulate.a = lerpf(
+		FORM_THRESHOLD_MIN_ALPHA,
+		FORM_THRESHOLD_MAX_ALPHA,
+		breath_weight
+	)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -93,12 +131,18 @@ func get_facing() -> Vector2:
 	return _facing
 
 
-func update_straight_aim_preview(direction: Vector2, distance: float, width: float) -> void:
+func update_straight_aim_preview(
+	direction: Vector2,
+	distance: float,
+	width: float,
+	form_threshold_radius: float = 0.0
+) -> void:
 	var normalized_direction := direction.normalized()
 	if normalized_direction == Vector2.ZERO:
 		set_aim_preview_invalid()
 		return
 
+	var previous_mode := _preview_mode
 	_is_aiming = true
 	_facing = normalized_direction
 	_preview_distance = distance
@@ -129,6 +173,7 @@ func update_straight_aim_preview(direction: Vector2, distance: float, width: flo
 	_aim_preview_center.visible = true
 	_aim_preview_outline.points = outline
 	_aim_preview_deadzone.visible = false
+	_apply_form_preview_visuals("STRAIGHT", previous_mode, form_threshold_radius)
 	_aim_preview.visible = true
 
 
@@ -140,9 +185,11 @@ func update_arc_aim_preview(
 	radius: float,
 	deadzone_radius: float,
 	move_direction: Vector2,
-	move_distance: float
+	move_distance: float,
+	form_threshold_radius: float = 0.0
 ) -> void:
 	var normalized_move := move_direction.normalized()
+	var previous_mode := _preview_mode
 	_is_aiming = true
 	if normalized_move != Vector2.ZERO:
 		_facing = normalized_move
@@ -165,6 +212,7 @@ func update_arc_aim_preview(
 	_aim_preview_outline.points = outline
 	_aim_preview_deadzone.points = _build_circle_outline(_preview_deadzone_radius)
 	_aim_preview_deadzone.visible = _preview_deadzone_radius > 0.0
+	_apply_form_preview_visuals("ARC", previous_mode, form_threshold_radius)
 	_aim_preview.visible = true
 
 
@@ -174,7 +222,14 @@ func set_aim_preview_invalid() -> void:
 	_preview_width = 0.0
 	_preview_radius = 0.0
 	_preview_deadzone_radius = 0.0
+	_preview_form_threshold_radius = 0.0
 	_preview_mode = "NONE"
+	_preview_visual_language = "NONE"
+	_form_threshold_visual_language = "NONE"
+	_form_threshold_breath_elapsed = 0.0
+	_aim_preview_form_threshold.scale = Vector2.ONE
+	_aim_preview_form_threshold.modulate = Color(1.0, 1.0, 1.0, FORM_THRESHOLD_MIN_ALPHA)
+	_aim_preview_form_threshold.visible = false
 	_aim_preview.visible = false
 
 
@@ -184,7 +239,15 @@ func clear_aim_preview() -> void:
 	_preview_width = 0.0
 	_preview_radius = 0.0
 	_preview_deadzone_radius = 0.0
+	_preview_form_threshold_radius = 0.0
 	_preview_mode = "NONE"
+	_preview_visual_language = "NONE"
+	_form_threshold_visual_language = "NONE"
+	_form_threshold_breath_elapsed = 0.0
+	_aim_preview_form_threshold.scale = Vector2.ONE
+	_aim_preview_form_threshold.modulate = Color(1.0, 1.0, 1.0, FORM_THRESHOLD_MIN_ALPHA)
+	_aim_preview_form_threshold.visible = false
+	_stop_form_switch_flash()
 	_aim_preview.visible = false
 	_update_facing_visual()
 
@@ -209,6 +272,46 @@ func get_aim_preview_deadzone_radius() -> float:
 	return _preview_deadzone_radius
 
 
+func get_aim_form_threshold_radius() -> float:
+	return _preview_form_threshold_radius
+
+
+func is_aim_form_threshold_visible() -> bool:
+	return _aim_preview_form_threshold.visible and _aim_preview.visible
+
+
+func is_form_switch_flash_visible() -> bool:
+	return _aim_preview_form_switch_flash.visible
+
+
+func get_form_switch_feedback_count() -> int:
+	return _form_switch_feedback_count
+
+
+func has_form_switch_audio_stream() -> bool:
+	return _form_switch_audio.stream != null
+
+
+func get_aim_preview_visual_language() -> String:
+	return _preview_visual_language
+
+
+func get_aim_form_threshold_visual_language() -> String:
+	return _form_threshold_visual_language
+
+
+func get_aim_form_threshold_alpha() -> float:
+	return _aim_preview_form_threshold.modulate.a
+
+
+func get_aim_form_threshold_scale() -> Vector2:
+	return _aim_preview_form_threshold.scale
+
+
+func get_aim_form_threshold_line_width() -> float:
+	return _aim_preview_form_threshold.width
+
+
 func is_aim_direction_arrow_visible() -> bool:
 	return _aim_preview_center.visible and _preview_mode == "ARC"
 
@@ -219,6 +322,88 @@ func is_aim_deadzone_visible() -> bool:
 
 func get_aim_preview_mode() -> String:
 	return _preview_mode
+
+
+func _apply_form_preview_visuals(mode: String, previous_mode: String, threshold_radius: float) -> void:
+	_preview_form_threshold_radius = maxf(threshold_radius, 0.0)
+	_aim_preview_form_threshold.points = _build_circle_outline(_preview_form_threshold_radius, 64)
+	_aim_preview_form_threshold.scale = Vector2.ONE
+	_aim_preview_form_threshold.visible = _preview_form_threshold_radius > 0.0
+
+	if mode == "ARC":
+		_preview_visual_language = "WARM_ARC"
+		_form_threshold_visual_language = "COOL_STRAIGHT_PREVIEW"
+		_aim_preview_form_threshold.default_color = Color(
+			STRAIGHT_LINE_COLOR.r,
+			STRAIGHT_LINE_COLOR.g,
+			STRAIGHT_LINE_COLOR.b,
+			1.0
+		)
+		_aim_preview_fill.color = ARC_FILL_COLOR
+		_aim_preview_center.default_color = ARC_LINE_COLOR
+		_aim_preview_outline.default_color = ARC_OUTLINE_COLOR
+		_aim_preview_deadzone.default_color = ARC_DEADZONE_COLOR
+	else:
+		_preview_visual_language = "COOL_STRAIGHT"
+		_form_threshold_visual_language = "WARM_ARC_PREVIEW"
+		_aim_preview_form_threshold.default_color = Color(
+			ARC_LINE_COLOR.r,
+			ARC_LINE_COLOR.g,
+			ARC_LINE_COLOR.b,
+			1.0
+		)
+		_aim_preview_fill.color = STRAIGHT_FILL_COLOR
+		_aim_preview_center.default_color = STRAIGHT_LINE_COLOR
+		_aim_preview_outline.default_color = STRAIGHT_OUTLINE_COLOR
+
+	if previous_mode != mode:
+		_form_threshold_breath_elapsed = 0.0
+		_aim_preview_form_threshold.modulate = Color(1.0, 1.0, 1.0, FORM_THRESHOLD_MIN_ALPHA)
+
+	if previous_mode != "NONE" and previous_mode != mode:
+		_play_form_switch_feedback(mode)
+
+
+func _play_form_switch_feedback(mode: String) -> void:
+	_form_switch_feedback_count += 1
+	if _form_switch_tween != null and _form_switch_tween.is_valid():
+		_form_switch_tween.kill()
+
+	_aim_preview_form_switch_flash.points = _build_circle_outline(_preview_form_threshold_radius, 64)
+	_aim_preview_form_switch_flash.default_color = ARC_LINE_COLOR if mode == "ARC" else STRAIGHT_LINE_COLOR
+	_aim_preview_form_switch_flash.scale = Vector2.ONE * 0.96
+	_aim_preview_form_switch_flash.modulate = Color.WHITE
+	_aim_preview_form_switch_flash.visible = _preview_form_threshold_radius > 0.0
+
+	_form_switch_tween = create_tween()
+	_form_switch_tween.set_parallel(true)
+	_form_switch_tween.tween_property(
+		_aim_preview_form_switch_flash,
+		"scale",
+		Vector2.ONE * 1.08,
+		FORM_SWITCH_FLASH_DURATION
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_form_switch_tween.tween_property(
+		_aim_preview_form_switch_flash,
+		"modulate",
+		Color(1.0, 1.0, 1.0, 0.0),
+		FORM_SWITCH_FLASH_DURATION
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_form_switch_tween.finished.connect(func() -> void:
+		_aim_preview_form_switch_flash.visible = false
+	)
+
+	if _form_switch_audio.stream != null:
+		_form_switch_audio.pitch_scale = 0.94 if mode == "ARC" else 1.06
+		_form_switch_audio.play()
+
+
+func _stop_form_switch_flash() -> void:
+	if _form_switch_tween != null and _form_switch_tween.is_valid():
+		_form_switch_tween.kill()
+	_aim_preview_form_switch_flash.visible = false
+	_aim_preview_form_switch_flash.scale = Vector2.ONE
+	_aim_preview_form_switch_flash.modulate = Color.WHITE
 
 
 func _build_circle_points(radius: float, segments: int = 40) -> PackedVector2Array:

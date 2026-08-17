@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/actors/player_controller.gd" id="1_player"]
 [ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_idle.png" id="2_idle"]
 [ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_walk.png" id="3_walk"]
 [ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_ready.png" id="4_ready"]
 [ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_dash_slash.png" id="5_dash"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/slash_form_switch.ogg" id="6_form_switch"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(30, 30)
@@ -49,6 +50,22 @@ antialiased = true
 width = 2.0
 default_color = Color(1, 0.48, 0.18, 0.72)
 antialiased = true
+
+[node name="FormThresholdOutline" type="Line2D" parent="AimPreview"]
+width = 1.5
+default_color = Color(0.76, 0.62, 0.92, 0.42)
+antialiased = true
+
+[node name="FormSwitchFlash" type="Line2D" parent="AimPreview"]
+visible = false
+width = 4.0
+default_color = Color(1, 1, 1, 0.95)
+antialiased = true
+
+[node name="FormSwitchAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_form_switch")
+volume_db = -16.0
+max_polyphony = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("PlayerShape")
