@@ -1,0 +1,6 @@
+interface:
+  display_name: "一刀反馈与手感"
+  short_description: "诊断并改善狐狸骑士的动作反馈与可读性"
+  default_prompt: "使用 $game-feel 检查这个反馈问题，保持玩法判定和胜负真值不变。"
+policy:
+  allow_implicit_invocation: false

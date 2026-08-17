@@ -1,0 +1,21 @@
+Use case: infographic-diagram
+Asset type: 16:9 landscape game introduction and friend playtest instruction poster
+Primary request: Create a polished, friendly Chinese infographic poster that introduces the indie prototype game and explains how to play it in plain everyday language. Use the current FoxKnight gameplay screenshot only as the visual reference for the real game: dark top-down pixel-art arena, small fox knight, moving armored enemies, purple-black environment, gold slash preview. Do not redesign the game or invent mechanics.
+Audience: an ordinary first-time player with no game-development knowledge.
+Style/medium: clean pixel-art-inspired game poster, high readability, modern infographic, large simplified Chinese typography, dark purple background with warm gold, orange and muted cyan accents.
+Composition/framing: 16:9 landscape. Big title across the top. Left half: a simplified visual of the fox knight facing three enemies with one gold slash path, based on the gameplay screenshot. Right half: two clean information cards, one for the game introduction and one for controls. Bottom: a highlighted one-line goal. Generous whitespace, very large text, no tiny footnotes.
+Text (verbatim; render every Chinese character and symbol exactly, do not add any other text):
+“《狐狸骑士：一刀狐狸》”
+“你只有一刀。看准、站好，再出手。”
+“游戏简介”
+“观察会移动的敌人，调整狐狸的位置，用唯一的一刀消灭所有敌人。出刀后不能反悔，全部消灭才算胜利。”
+“操作说明”
+“WASD / 方向键：移动”
+“按住鼠标左键：瞄准”
+“鼠标靠近狐狸：近身弧斩”
+“鼠标离狐狸较远：远距直斩”
+“松开鼠标左键：出刀”
+“鼠标右键：取消瞄准”
+“R 键 / 按钮：重新开始”
+“测试目标：试着用一刀消灭全部 3 个敌人！”
+Constraints: Simplified Chinese only except WASD and R. Render the exact text once each. Typography must be crisp, large and legible at normal desktop viewing size. No developer jargon. No logos, no watermark, no fake UI, no extra mechanics, no extra text. Preserve the recognizable fox and enemy silhouettes and the dark pixel-art mood of the gameplay screenshot.

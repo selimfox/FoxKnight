@@ -1,0 +1,4 @@
+interface:
+  display_name: "狐狸骑士 TDD 维护"
+  short_description: "可靠维护版本化 TDD、当前入口与 GDD 技术交接流程"
+  default_prompt: "使用 $fox-knight-tdd-maintainer 根据当前 GDD 维护或升级狐狸骑士 TDD。"

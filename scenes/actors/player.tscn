@@ -1,0 +1,59 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/actors/player_controller.gd" id="1_player"]
+[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_idle.png" id="2_idle"]
+[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_walk.png" id="3_walk"]
+[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_ready.png" id="4_ready"]
+[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_dash_slash.png" id="5_dash"]
+
+[sub_resource type="RectangleShape2D" id="PlayerShape"]
+size = Vector2(30, 30)
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player")
+idle_texture = ExtResource("2_idle")
+walk_texture = ExtResource("3_walk")
+ready_texture = ExtResource("4_ready")
+dash_texture = ExtResource("5_dash")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+texture_filter = 1
+texture = ExtResource("2_idle")
+scale = Vector2(0.29, 0.29)
+
+[node name="AimPreview" type="Node2D" parent="."]
+visible = false
+z_index = 10
+
+[node name="Fill" type="Polygon2D" parent="AimPreview"]
+color = Color(1, 0.72, 0.2, 0.18)
+polygon = PackedVector2Array(0, -40, 400, -40, 400, 40, 0, 40)
+
+[node name="CenterLine" type="Line2D" parent="AimPreview"]
+points = PackedVector2Array(0, 0, 400, 0)
+width = 3.0
+default_color = Color(1, 0.82, 0.32, 0.9)
+antialiased = true
+
+[node name="Outline" type="Line2D" parent="AimPreview"]
+points = PackedVector2Array(0, -40, 400, -40, 400, 40, 0, 40, 0, -40)
+width = 2.0
+default_color = Color(1, 0.88, 0.44, 0.86)
+antialiased = true
+
+[node name="DeadzoneOutline" type="Line2D" parent="AimPreview"]
+width = 2.0
+default_color = Color(1, 0.48, 0.18, 0.72)
+antialiased = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("PlayerShape")
+
+[node name="FacingMarker" type="Marker2D" parent="."]
+position = Vector2(26, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

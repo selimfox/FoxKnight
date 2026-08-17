@@ -1,0 +1,7 @@
+interface:
+  display_name: "FoxKnight Git Safety Gate"
+  short_description: "Audit commits, pushes, exports, and releases safely"
+  default_prompt: "Use $fox-knight-git-safety-gate to audit this FoxKnight commit or release before any Git write."
+
+policy:
+  allow_implicit_invocation: false

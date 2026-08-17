@@ -1,0 +1,59 @@
+# 狐狸骑士 / 一刀狐狸
+
+独立游戏项目。当前游戏设计与开发范围以 `docs/GDD.md` 为准。
+
+## 项目结构
+
+```text
+FoxKnight/
+├── AGENTS.md                  # 全体 agent 共用规则与任务路由
+├── .agents/skills/            # 项目 Skills 的 canonical source
+├── agents/
+│   ├── architect.md           # 设计、架构、范围与设计文档治理
+│   ├── coding.md              # Godot 实现、调试、测试与技术文档
+│   └── learning.md            # 学习、调研、验证与能力建设
+├── backups/                   # 修改前的安全备份，按原目录分类
+│   ├── root/                  # 根目录文件的备份
+│   └── docs/                  # docs/ 文件的备份
+├── docs/
+│   ├── OnePaper.md            # 创作者愿景与核心方向，不替代 GDD
+│   ├── GDD.md                 # 当前设计与版本范围
+│   ├── DecisionLog.md         # 重要设计变化及原因
+│   ├── SkillRoadmap.md        # 能力建设与验证计划
+│   ├── TDD.md                 # 当前技术设计入口
+│   ├── TDD_v0.1.md            # v0.1 Prototype 技术实现基线
+│   └── archive/               # 历史文档
+├── scripts/                   # Godot 脚本
+├── assets/
+│   ├── art/                   # 美术资源
+│   └── audio/                 # 音频资源
+└── project.godot              # Godot 项目入口（未来建立）
+```
+
+`docs/GDD.docx` 若存在，只是 `docs/GDD.md` 的阅读和展示副本，不是设计来源。
+
+## 阅读与协作入口
+
+首次了解项目时，建议依次阅读：
+
+1. `README.md`
+2. `docs/OnePaper.md`
+3. `docs/GDD.md`
+4. `docs/DecisionLog.md`
+
+使用 agent 工作时，先阅读根目录 `AGENTS.md`，再按任务类型进入相应角色文件：
+
+- 架构、设计与设计文档：`agents/architect.md`
+- 开发、调试与测试：`agents/coding.md`
+- 学习、调研与复盘：`agents/learning.md`
+
+## 文档边界
+
+- One Paper 表达创作者愿景与核心方向，不替代 GDD，也不作为当前版本的制作与验收依据。
+- GDD 描述游戏当前是什么以及当前版本做什么。
+- DecisionLog 解释重要设计为什么发生变化。
+- TDD 记录如何实现已确认设计，不重新定义玩法。
+- SkillRoadmap 记录需要学习和验证什么，不产生实现承诺。
+- backups 保存修改前的安全副本；archive 保存正式历史版本，两者不混用。
+- 根 AGENTS 只维护共用规则与路由；角色细则由 `agents/` 下的文件维护。
+- README 只负责项目入口、结构说明和文档索引。

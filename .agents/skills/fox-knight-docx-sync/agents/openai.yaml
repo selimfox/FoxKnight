@@ -1,0 +1,4 @@
+interface:
+  display_name: "狐狸骑士 Word 同步"
+  short_description: "从正式 Markdown 同步、排版并验证 GDD Word 阅读副本"
+  default_prompt: "使用 $fox-knight-docx-sync 从定稿的 Markdown 更新并检查 GDD Word 副本。"

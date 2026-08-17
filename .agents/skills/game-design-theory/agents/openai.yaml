@@ -1,0 +1,6 @@
+interface:
+  display_name: "设计理论发散"
+  short_description: "为狐狸骑士提出受约束、可验证的设计候选"
+  default_prompt: "使用 $game-design-theory 围绕这个设计问题提出候选方案，不作最终决策。"
+policy:
+  allow_implicit_invocation: false
