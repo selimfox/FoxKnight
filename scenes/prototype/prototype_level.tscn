@@ -29,6 +29,8 @@ corner_radius_bottom_left = 3
 [node name="PrototypeLevel" type="Node2D" unique_id=1235542066]
 script = ExtResource("1_level")
 settlement_delay = 0.25
+arc_radius = 100.0
+arc_move_distance = 100.0
 
 [node name="Arena" type="Node2D" parent="." unique_id=1407053309]
 

@@ -355,6 +355,7 @@ PrototypeSlash 只查询 Enemy 层；Enemy 不查询或伤害 Player。实际层
 | 风险 | 影响 | v0.1 缓解方式 |
 | --- | --- | --- |
 | 斩击形态和输入仍未定 | 过早抽象会浪费时间，硬编码又可能难替换 | 只隔离 `PrototypeSlash` 与攻击请求接口；明确临时标记 |
+| 斩击调参所有权分裂 | 直斩距离／宽度／时长位于 `PrototypeSlash`，刀型阈值与弧斩半径／短移／死区位于 `PrototypeLevel`；设计者需要跨场景调参，后续增加刀型时容易出现来源不清和隐式耦合 | 当前依靠显式传参与 Smoke Acceptance 保证预览和判定一致；暂不在人工验收前重构，详细现状、候选整理方向与触发条件见 TD-01 |
 | 刀型阈值边界或预览切换抖动 | 玩家在提交前误判将使用哪种刀型 | 明确采用 `<` 为弧形、`>=` 为直线；阈值通过 Inspector 调试，自动覆盖小于、等于和大于三种条件 |
 | 预览与真实判定漂移 | 玩家误以为弧形圆预览已表达完整短位移路径，或刀光与即时判定错位 | 文档与 HUD 只把圆形预览定义为当前时点范围；预览、逐帧查询和刀光共用弧形半径，执行循环同步 Player、刀光与查询中心；自动断言圆形预览不展开、沿途目标命中和跟随误差 |
 | 右键取消后左键释放误提交 | 玩家明确反悔却消耗唯一一刀 | 关卡状态先回到 `OBSERVING`，左键释放只有在 `AIMING` 才合法；自动覆盖事件顺序 |
@@ -429,6 +430,7 @@ PrototypeSlash 只查询 Enemy 层；Enemy 不查询或伤害 Player。实际层
 
 | 日期 | 变更 |
 | --- | --- |
+| 2026-08-18 | 记录 TD-01：当前直斩与弧斩调参分属 `PrototypeSlash` 和 `PrototypeLevel`，属于增量实现留下的参数所有权技术债。明确当前功能仍由显式传参与自动验收保护；人工验收前不改代码，验收后再决定是否将 v0.1 参数收拢为单一临时调参入口。未引入 Resource、AbilitySystem 或配置数据库。 |
 | 2026-08-18 | 将中性弱紫 `FormThresholdOutline` 更新为反色下一刀型预告圈：近弧显示弱蓝白、远直显示弱橙；新增 1.6 秒透明度呼吸（0.18～0.34），不改变半径、缩放、线宽或填充。扩展 Smoke Acceptance 并完成 D3D12 六状态捕获；完整回归通过，首次玩家语义理解仍待人工验证。 |
 | 2026-08-17 | 对齐 GDD v0.1 刀型切换可读性：新增与真实阈值共参的 `FormThresholdOutline`、实际跨圈时单次触发的 `FormSwitchFlash` 与 `FormSwitchAudio`；接入 Kenney UI Audio CC0 `switch14.ogg` 占位声；近弧使用暖橙、远直使用冷青并贯穿预览与执行。更新后的 Smoke Acceptance、Godot 4.7.1 导入和 D3D12 四状态捕获通过；主观听感与首次玩家语义理解仍待人工验证。 |
 | 2026-08-17 | 弧形斩短位移方向由 WASD 改为提交时鼠标角度；新增默认 24 的 `arc_direction_deadzone_radius`、`DeadzoneOutline` 圆和 CenterLine 实时位移箭头。死区内原地斩，死区边界/外部箭头显示边界裁剪后的实际距离；WASD 只移动狐狸。Godot 4.7.1 导入、更新后的 Smoke Acceptance 与 D3D12 双状态捕获通过。 |
@@ -450,3 +452,17 @@ PrototypeSlash 只查询 Enemy 层；Enemy 不查询或伤害 Player。实际层
 - 修复：路线端点统一由 `_origin ± _patrol_axis × patrol_distance` 计算，再转换到敌人当前局部坐标绘制；敌人移动期间仅在显示开启时请求重绘。`show_path` 默认值由开启改为关闭，以符合试玩构建默认关闭 Debug 叠层的约定。
 - 范围：只改变路线调试图形；`patrol_distance` 仍表示从出生点向巡逻轴两端各延伸的距离，完整路线长度为 `2 × patrol_distance`。敌人移动、掉头、碰撞、命中与胜负逻辑均未改变。
 - 验证：Godot 4.7.1 重新导入与脚本注册通过；Smoke Acceptance 新增检查确认路线默认隐藏，且敌人位置发生变化后世界坐标端点保持不变；完整原型 Smoke Acceptance 继续通过。
+
+## 16. 技术债与后续整理
+
+### TD-01｜直斩与弧斩调参所有权分裂
+
+- **状态**：已发现，尚未整理；当前不是功能缺陷，不阻塞 2026-08-18 人工验收。
+- **当前事实**：`PrototypeLevel` 暴露 `slash_form_distance_threshold`、`arc_radius`、`arc_move_distance` 与 `arc_direction_deadzone_radius`，负责刀型选择、预览和边界裁剪；`PrototypeSlash` 暴露 `distance`、`width`、`duration` 与 `hitbox_tolerance_multiplier`，其中前三项源于最初只有直斩的实现。Level 在瞄准时从临时 `_prepared_slash` 读取直斩距离、宽度和命中倍率，提交时再把弧斩半径与短移结果传给 Slash 执行。
+- **形成原因**：直斩先于双刀型实现；加入弧斩时，为保持 v0.1 范围，新增参数直接放在负责刀型选择的 Level，没有同步整理原直斩参数，因此形成两个 Inspector 调参入口。
+- **当前影响**：设计者需要在 `prototype_level.tscn` 与 `prototype_slash.tscn` 之间切换；`hitbox_tolerance_multiplier` 位于 Slash 却同时缩放直斩宽度与 Level 提供的弧斩半径；若直接继续增加刀型，参数来源、预览共参和提交快照会更难追踪。
+- **现有保护**：直斩预览从 `_prepared_slash.distance / width` 读取，弧斩预览与执行使用同一 `arc_radius`，两者共同应用同一命中倍率；当前 Smoke Acceptance 已覆盖阈值、预览几何、执行模式、弧斩圆形命中和范围外存活。因此目前结论是“所有权不整齐但行为仍一致”，不能把结构问题误报成功能故障。
+- **候选整理方向（未确认实现）**：在本轮人工验收完成后，优先考虑一次不改变玩法的纯重构：由 `PrototypeLevel` 作为 v0.1 单一临时调参入口，提交时把本次直斩／弧斩的完整参数快照显式交给 `PrototypeSlash`；Slash 只保留单次执行状态、命中查询、刀光和 Debug 表现。该方向服务当前 Prototype 的调参清晰度，不代表正式玩家能力架构。
+- **暂不采用的捷径**：不只为了 Inspector 看起来统一而把刀型阈值和方向死区塞进瞬时 `PrototypeSlash` 节点；它们属于瞄准和输入裁决，放入执行对象会把配置、意图解析与一次性效果继续混在一起。
+- **升级触发条件**：只有出现第二个需要复用的真实能力、多个场景需要共享同一套斩击参数，或反复发生跨场景调参／复制错误时，才评估提取轻量 `SlashTuning Resource (.tres)`。在触发前不建立 AbilitySystem、技能数据库、自定义编辑器或通用配置框架。
+- **下一步**：先完成当前 Build 的创作者验收；验收记录参数调整频率与跨场景操作负担，再由用户确认是否在下一轮开始前执行上述纯重构。若执行，必须保持 GDD 行为不变并重跑完整 Smoke Acceptance。
