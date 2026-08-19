@@ -36,7 +36,7 @@ func execute(
 	arc_radius: float = 90.0
 ) -> void:
 	if mode == SlashMode.ARC:
-		await _execute_arc(player, origin, direction, allowed_distance, arc_radius)
+		await _execute_arc(player, origin, arc_radius)
 	else:
 		await _execute_straight(player, origin, direction, allowed_distance)
 
@@ -74,39 +74,32 @@ func _execute_straight(
 func _execute_arc(
 	player: PlayerController,
 	origin: Vector2,
-	direction: Vector2,
-	allowed_distance: float,
 	arc_radius: float
 ) -> void:
 	global_position = origin
-	var move_direction := direction.normalized()
-	var actual_distance := maxf(allowed_distance, 0.0) if move_direction != Vector2.ZERO else 0.0
+	player.global_position = origin
 	var actual_radius := maxf(arc_radius * hitbox_tolerance_multiplier, 1.0)
 	rotation = 0.0
 	_configure_arc_visual(actual_radius)
 	player.play_arc_attack_pose(duration)
-	var target := origin + move_direction * actual_distance
 	var hit_enemies: Dictionary = {}
 	var circle := CircleShape2D.new()
 	circle.radius = actual_radius
 	var elapsed := 0.0
 	while elapsed < duration:
 		var progress := clampf(elapsed / duration, 0.0, 1.0)
-		var eased_progress := 1.0 - pow(1.0 - progress, 4.0)
-		player.global_position = origin.lerp(target, eased_progress)
-		global_position = player.global_position
 		_arc_visual_progress = progress
 		modulate.a = lerpf(1.0, 0.42, progress)
 		queue_redraw()
-		_collect_circle_hits(player, circle, global_position, hit_enemies)
+		_collect_circle_hits(player, circle, origin, hit_enemies)
 		await get_tree().physics_frame
 		elapsed += get_physics_process_delta_time()
 
-	player.global_position = target
-	global_position = target
+	player.global_position = origin
+	global_position = origin
 	_arc_visual_progress = 1.0
 	queue_redraw()
-	_collect_circle_hits(player, circle, global_position, hit_enemies)
+	_collect_circle_hits(player, circle, origin, hit_enemies)
 	finished.emit(hit_enemies.size())
 	queue_free()
 

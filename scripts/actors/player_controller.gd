@@ -4,13 +4,12 @@ extends CharacterBody2D
 const ARC_FILL_COLOR := Color(1.0, 0.44, 0.08, 0.20)
 const ARC_LINE_COLOR := Color(1.0, 0.78, 0.22, 0.96)
 const ARC_OUTLINE_COLOR := Color(1.0, 0.58, 0.14, 0.92)
-const ARC_DEADZONE_COLOR := Color(1.0, 0.42, 0.08, 0.74)
 const STRAIGHT_FILL_COLOR := Color(0.10, 0.72, 1.0, 0.18)
 const STRAIGHT_LINE_COLOR := Color(0.62, 0.95, 1.0, 0.96)
 const STRAIGHT_OUTLINE_COLOR := Color(0.25, 0.82, 1.0, 0.92)
-const FORM_THRESHOLD_MIN_ALPHA := 0.18
-const FORM_THRESHOLD_MAX_ALPHA := 0.34
-const FORM_THRESHOLD_BREATH_PERIOD := 1.6
+const ARC_BOUNDARY_MIN_ALPHA := 0.12
+const ARC_BOUNDARY_MAX_ALPHA := 0.24
+const ARC_BOUNDARY_BREATH_PERIOD := 1.6
 const FORM_SWITCH_FLASH_DURATION := 0.18
 
 signal aim_started(target_position: Vector2)
@@ -36,12 +35,11 @@ var _is_aiming := false
 var _preview_distance := 0.0
 var _preview_width := 0.0
 var _preview_radius := 0.0
-var _preview_deadzone_radius := 0.0
-var _preview_form_threshold_radius := 0.0
+var _preview_arc_boundary_radius := 0.0
 var _preview_mode := "NONE"
 var _preview_visual_language := "NONE"
-var _form_threshold_visual_language := "NONE"
-var _form_threshold_breath_elapsed := 0.0
+var _arc_boundary_visual_language := "NONE"
+var _arc_boundary_breath_elapsed := 0.0
 var _last_attack_pose := "NONE"
 var _form_switch_feedback_count := 0
 var _form_switch_tween: Tween
@@ -52,8 +50,7 @@ var _form_switch_tween: Tween
 @onready var _aim_preview_fill: Polygon2D = $AimPreview/Fill
 @onready var _aim_preview_center: Line2D = $AimPreview/CenterLine
 @onready var _aim_preview_outline: Line2D = $AimPreview/Outline
-@onready var _aim_preview_deadzone: Line2D = $AimPreview/DeadzoneOutline
-@onready var _aim_preview_form_threshold: Line2D = $AimPreview/FormThresholdOutline
+@onready var _aim_preview_arc_boundary: Line2D = $AimPreview/ArcBoundaryOutline
 @onready var _aim_preview_form_switch_flash: Line2D = $AimPreview/FormSwitchFlash
 @onready var _form_switch_audio: AudioStreamPlayer = $FormSwitchAudio
 
@@ -86,18 +83,18 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
-	if not _aim_preview_form_threshold.visible:
+	if not _aim_preview_arc_boundary.visible:
 		return
 
-	_form_threshold_breath_elapsed = fmod(
-		_form_threshold_breath_elapsed + delta,
-		FORM_THRESHOLD_BREATH_PERIOD
+	_arc_boundary_breath_elapsed = fmod(
+		_arc_boundary_breath_elapsed + delta,
+		ARC_BOUNDARY_BREATH_PERIOD
 	)
-	var breath_phase := _form_threshold_breath_elapsed / FORM_THRESHOLD_BREATH_PERIOD * TAU - PI * 0.5
+	var breath_phase := _arc_boundary_breath_elapsed / ARC_BOUNDARY_BREATH_PERIOD * TAU - PI * 0.5
 	var breath_weight := (sin(breath_phase) + 1.0) * 0.5
-	_aim_preview_form_threshold.modulate.a = lerpf(
-		FORM_THRESHOLD_MIN_ALPHA,
-		FORM_THRESHOLD_MAX_ALPHA,
+	_aim_preview_arc_boundary.modulate.a = lerpf(
+		ARC_BOUNDARY_MIN_ALPHA,
+		ARC_BOUNDARY_MAX_ALPHA,
 		breath_weight
 	)
 
@@ -148,7 +145,6 @@ func update_straight_aim_preview(
 	_preview_distance = distance
 	_preview_width = width
 	_preview_radius = 0.0
-	_preview_deadzone_radius = 0.0
 	_preview_mode = "STRAIGHT"
 	_update_facing_visual()
 
@@ -172,7 +168,6 @@ func update_straight_aim_preview(
 	_aim_preview_center.points = PackedVector2Array([Vector2.ZERO, Vector2(distance, 0.0)])
 	_aim_preview_center.visible = true
 	_aim_preview_outline.points = outline
-	_aim_preview_deadzone.visible = false
 	_apply_form_preview_visuals("STRAIGHT", previous_mode, form_threshold_radius)
 	_aim_preview.visible = true
 
@@ -181,24 +176,13 @@ func update_aim_preview(direction: Vector2, distance: float, width: float) -> vo
 	update_straight_aim_preview(direction, distance, width)
 
 
-func update_arc_aim_preview(
-	radius: float,
-	deadzone_radius: float,
-	move_direction: Vector2,
-	move_distance: float,
-	form_threshold_radius: float = 0.0
-) -> void:
-	var normalized_move := move_direction.normalized()
+func update_arc_aim_preview(radius: float) -> void:
 	var previous_mode := _preview_mode
 	_is_aiming = true
-	if normalized_move != Vector2.ZERO:
-		_facing = normalized_move
-		_update_facing_visual()
 
-	_preview_distance = move_distance
+	_preview_distance = 0.0
 	_preview_width = radius * 2.0
 	_preview_radius = radius
-	_preview_deadzone_radius = maxf(deadzone_radius, 0.0)
 	_preview_mode = "ARC"
 	_aim_preview.rotation = 0.0
 
@@ -207,12 +191,10 @@ func update_arc_aim_preview(
 	if not outline.is_empty():
 		outline.append(outline[0])
 	_aim_preview_fill.polygon = circle
-	_aim_preview_center.points = _build_arrow_points(normalized_move, move_distance)
-	_aim_preview_center.visible = normalized_move != Vector2.ZERO and move_distance > 0.0
+	_aim_preview_center.points = PackedVector2Array()
+	_aim_preview_center.visible = false
 	_aim_preview_outline.points = outline
-	_aim_preview_deadzone.points = _build_circle_outline(_preview_deadzone_radius)
-	_aim_preview_deadzone.visible = _preview_deadzone_radius > 0.0
-	_apply_form_preview_visuals("ARC", previous_mode, form_threshold_radius)
+	_apply_form_preview_visuals("ARC", previous_mode, radius)
 	_aim_preview.visible = true
 
 
@@ -221,15 +203,14 @@ func set_aim_preview_invalid() -> void:
 	_preview_distance = 0.0
 	_preview_width = 0.0
 	_preview_radius = 0.0
-	_preview_deadzone_radius = 0.0
-	_preview_form_threshold_radius = 0.0
+	_preview_arc_boundary_radius = 0.0
 	_preview_mode = "NONE"
 	_preview_visual_language = "NONE"
-	_form_threshold_visual_language = "NONE"
-	_form_threshold_breath_elapsed = 0.0
-	_aim_preview_form_threshold.scale = Vector2.ONE
-	_aim_preview_form_threshold.modulate = Color(1.0, 1.0, 1.0, FORM_THRESHOLD_MIN_ALPHA)
-	_aim_preview_form_threshold.visible = false
+	_arc_boundary_visual_language = "NONE"
+	_arc_boundary_breath_elapsed = 0.0
+	_aim_preview_arc_boundary.scale = Vector2.ONE
+	_aim_preview_arc_boundary.modulate = Color(1.0, 1.0, 1.0, ARC_BOUNDARY_MIN_ALPHA)
+	_aim_preview_arc_boundary.visible = false
 	_aim_preview.visible = false
 
 
@@ -238,15 +219,14 @@ func clear_aim_preview() -> void:
 	_preview_distance = 0.0
 	_preview_width = 0.0
 	_preview_radius = 0.0
-	_preview_deadzone_radius = 0.0
-	_preview_form_threshold_radius = 0.0
+	_preview_arc_boundary_radius = 0.0
 	_preview_mode = "NONE"
 	_preview_visual_language = "NONE"
-	_form_threshold_visual_language = "NONE"
-	_form_threshold_breath_elapsed = 0.0
-	_aim_preview_form_threshold.scale = Vector2.ONE
-	_aim_preview_form_threshold.modulate = Color(1.0, 1.0, 1.0, FORM_THRESHOLD_MIN_ALPHA)
-	_aim_preview_form_threshold.visible = false
+	_arc_boundary_visual_language = "NONE"
+	_arc_boundary_breath_elapsed = 0.0
+	_aim_preview_arc_boundary.scale = Vector2.ONE
+	_aim_preview_arc_boundary.modulate = Color(1.0, 1.0, 1.0, ARC_BOUNDARY_MIN_ALPHA)
+	_aim_preview_arc_boundary.visible = false
 	_stop_form_switch_flash()
 	_aim_preview.visible = false
 	_update_facing_visual()
@@ -268,16 +248,12 @@ func get_aim_preview_radius() -> float:
 	return _preview_radius
 
 
-func get_aim_preview_deadzone_radius() -> float:
-	return _preview_deadzone_radius
+func get_aim_arc_boundary_radius() -> float:
+	return _preview_arc_boundary_radius
 
 
-func get_aim_form_threshold_radius() -> float:
-	return _preview_form_threshold_radius
-
-
-func is_aim_form_threshold_visible() -> bool:
-	return _aim_preview_form_threshold.visible and _aim_preview.visible
+func is_aim_arc_boundary_visible() -> bool:
+	return _aim_preview_arc_boundary.visible and _aim_preview.visible
 
 
 func is_form_switch_flash_visible() -> bool:
@@ -296,57 +272,42 @@ func get_aim_preview_visual_language() -> String:
 	return _preview_visual_language
 
 
-func get_aim_form_threshold_visual_language() -> String:
-	return _form_threshold_visual_language
+func get_aim_arc_boundary_visual_language() -> String:
+	return _arc_boundary_visual_language
 
 
-func get_aim_form_threshold_alpha() -> float:
-	return _aim_preview_form_threshold.modulate.a
+func get_aim_arc_boundary_alpha() -> float:
+	return _aim_preview_arc_boundary.modulate.a
 
 
-func get_aim_form_threshold_scale() -> Vector2:
-	return _aim_preview_form_threshold.scale
+func get_aim_arc_boundary_scale() -> Vector2:
+	return _aim_preview_arc_boundary.scale
 
 
-func get_aim_form_threshold_line_width() -> float:
-	return _aim_preview_form_threshold.width
-
-
-func is_aim_direction_arrow_visible() -> bool:
-	return _aim_preview_center.visible and _preview_mode == "ARC"
-
-
-func is_aim_deadzone_visible() -> bool:
-	return _aim_preview_deadzone.visible and _preview_mode == "ARC"
+func get_aim_arc_boundary_line_width() -> float:
+	return _aim_preview_arc_boundary.width
 
 
 func get_aim_preview_mode() -> String:
 	return _preview_mode
 
 
-func _apply_form_preview_visuals(mode: String, previous_mode: String, threshold_radius: float) -> void:
-	_preview_form_threshold_radius = maxf(threshold_radius, 0.0)
-	_aim_preview_form_threshold.points = _build_circle_outline(_preview_form_threshold_radius, 64)
-	_aim_preview_form_threshold.scale = Vector2.ONE
-	_aim_preview_form_threshold.visible = _preview_form_threshold_radius > 0.0
+func _apply_form_preview_visuals(mode: String, previous_mode: String, arc_boundary_radius: float) -> void:
+	_preview_arc_boundary_radius = maxf(arc_boundary_radius, 0.0)
+	_aim_preview_arc_boundary.points = _build_circle_outline(_preview_arc_boundary_radius, 64)
+	_aim_preview_arc_boundary.scale = Vector2.ONE
+	_aim_preview_arc_boundary.visible = mode == "STRAIGHT" and _preview_arc_boundary_radius > 0.0
 
 	if mode == "ARC":
 		_preview_visual_language = "WARM_ARC"
-		_form_threshold_visual_language = "COOL_STRAIGHT_PREVIEW"
-		_aim_preview_form_threshold.default_color = Color(
-			STRAIGHT_LINE_COLOR.r,
-			STRAIGHT_LINE_COLOR.g,
-			STRAIGHT_LINE_COLOR.b,
-			1.0
-		)
+		_arc_boundary_visual_language = "MERGED_WITH_ARC_RANGE"
 		_aim_preview_fill.color = ARC_FILL_COLOR
 		_aim_preview_center.default_color = ARC_LINE_COLOR
 		_aim_preview_outline.default_color = ARC_OUTLINE_COLOR
-		_aim_preview_deadzone.default_color = ARC_DEADZONE_COLOR
 	else:
 		_preview_visual_language = "COOL_STRAIGHT"
-		_form_threshold_visual_language = "WARM_ARC_PREVIEW"
-		_aim_preview_form_threshold.default_color = Color(
+		_arc_boundary_visual_language = "WARM_ARC_PREVIEW"
+		_aim_preview_arc_boundary.default_color = Color(
 			ARC_LINE_COLOR.r,
 			ARC_LINE_COLOR.g,
 			ARC_LINE_COLOR.b,
@@ -357,8 +318,8 @@ func _apply_form_preview_visuals(mode: String, previous_mode: String, threshold_
 		_aim_preview_outline.default_color = STRAIGHT_OUTLINE_COLOR
 
 	if previous_mode != mode:
-		_form_threshold_breath_elapsed = 0.0
-		_aim_preview_form_threshold.modulate = Color(1.0, 1.0, 1.0, FORM_THRESHOLD_MIN_ALPHA)
+		_arc_boundary_breath_elapsed = 0.0
+		_aim_preview_arc_boundary.modulate = Color(1.0, 1.0, 1.0, ARC_BOUNDARY_MIN_ALPHA)
 
 	if previous_mode != "NONE" and previous_mode != mode:
 		_play_form_switch_feedback(mode)
@@ -369,11 +330,11 @@ func _play_form_switch_feedback(mode: String) -> void:
 	if _form_switch_tween != null and _form_switch_tween.is_valid():
 		_form_switch_tween.kill()
 
-	_aim_preview_form_switch_flash.points = _build_circle_outline(_preview_form_threshold_radius, 64)
+	_aim_preview_form_switch_flash.points = _build_circle_outline(_preview_arc_boundary_radius, 64)
 	_aim_preview_form_switch_flash.default_color = ARC_LINE_COLOR if mode == "ARC" else STRAIGHT_LINE_COLOR
 	_aim_preview_form_switch_flash.scale = Vector2.ONE * 0.96
 	_aim_preview_form_switch_flash.modulate = Color.WHITE
-	_aim_preview_form_switch_flash.visible = _preview_form_threshold_radius > 0.0
+	_aim_preview_form_switch_flash.visible = _preview_arc_boundary_radius > 0.0
 
 	_form_switch_tween = create_tween()
 	_form_switch_tween.set_parallel(true)
@@ -420,22 +381,6 @@ func _build_circle_outline(radius: float, segments: int = 32) -> PackedVector2Ar
 	if not points.is_empty():
 		points.append(points[0])
 	return points
-
-
-func _build_arrow_points(direction: Vector2, distance: float) -> PackedVector2Array:
-	if direction == Vector2.ZERO or distance <= 0.0:
-		return PackedVector2Array()
-	var end := direction * distance
-	var head_length := minf(14.0, maxf(distance * 0.3, 6.0))
-	var left_head := end - direction.rotated(-0.55) * head_length
-	var right_head := end - direction.rotated(0.55) * head_length
-	return PackedVector2Array([
-		Vector2.ZERO,
-		end,
-		left_head,
-		end,
-		right_head,
-	])
 
 
 func play_attack_pose() -> void:

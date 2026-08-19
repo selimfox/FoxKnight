@@ -22,6 +22,8 @@ FoxKnight/
 │   ├── SkillRoadmap.md        # 能力建设与验证计划
 │   ├── TDD.md                 # 当前技术设计入口
 │   ├── TDD_v0.1.md            # v0.1 Prototype 技术实现基线
+│   ├── playtest/              # 与 GDD 版本绑定的 Prototype 测试记录
+│   │   └── PrototypeTestLog_v0.1.md
 │   └── archive/               # 历史文档
 ├── scripts/                   # Godot 脚本
 ├── assets/
@@ -53,6 +55,7 @@ FoxKnight/
 - GDD 描述游戏当前是什么以及当前版本做什么。
 - DecisionLog 解释重要设计为什么发生变化。
 - TDD 记录如何实现已确认设计，不重新定义玩法。
+- Prototype Test Log 按 GDD 版本保存逐次验收与试玩证据，不定义玩法，也不把功能通过等同于体验成立。
 - SkillRoadmap 记录需要学习和验证什么，不产生实现承诺。
 - backups 保存修改前的安全副本；archive 保存正式历史版本，两者不混用。
 - 根 AGENTS 只维护共用规则与路由；角色细则由 `agents/` 下的文件维护。

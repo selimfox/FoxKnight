@@ -46,14 +46,9 @@ width = 2.0
 default_color = Color(1, 0.88, 0.44, 0.86)
 antialiased = true
 
-[node name="DeadzoneOutline" type="Line2D" parent="AimPreview"]
-width = 2.0
-default_color = Color(1, 0.48, 0.18, 0.72)
-antialiased = true
-
-[node name="FormThresholdOutline" type="Line2D" parent="AimPreview"]
+[node name="ArcBoundaryOutline" type="Line2D" parent="AimPreview"]
 width = 1.5
-default_color = Color(0.76, 0.62, 0.92, 0.42)
+default_color = Color(1, 0.78, 0.22, 0.18)
 antialiased = true
 
 [node name="FormSwitchFlash" type="Line2D" parent="AimPreview"]

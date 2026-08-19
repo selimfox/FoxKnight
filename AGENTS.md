@@ -20,6 +20,7 @@
 - `docs/GDD.md`：当前游戏设计和当前版本范围的唯一正式来源。
 - `docs/DecisionLog.md`：重要设计变化及其原因，不重复完整设计。
 - `docs/TDD.md`：技术架构、实现约束和已确认技术决策的正式来源；不得重新定义玩法。
+- `docs/playtest/PrototypeTestLog_vX.Y.md`：与同版本 GDD 绑定的逐次 Prototype 验收和试玩证据；不得定义玩法，也不得把功能通过写成体验结论。
 - `docs/SkillRoadmap.md`：能力建设、学习主题和验证计划；不得作为当前设计或实现需求。
 - `README.md`：项目入口、目录说明和文档索引。
 - `docs/archive/`：历史版本，不作为当前开发依据。
@@ -42,6 +43,7 @@
 - 当前 GDD 固定为 `docs/GDD.md`，版本号写在正文中。
 - 历史 GDD 只放入 `docs/archive/`，不得替代当前路径。
 - 当前 TDD 入口固定为 `docs/TDD.md`，版本化技术正文使用 `docs/TDD_vX.Y.md`；旧版正文必须保留。
+- Prototype 测试记录固定放在 `docs/playtest/PrototypeTestLog_vX.Y.md`，版本号必须与其对应 GDD 一致；GDD 升版后新建对应文件，旧版记录保留且不得混写。
 - 项目 Skill 的 canonical source 位于 `.agents/skills/`。
 - 各 agent 的职责说明固定放在 `agents/`。
 - 所有手动或自动备份统一放入根目录 `backups/`，不得散落在源文件旁：
@@ -65,3 +67,6 @@
 - 未经用户明确要求，不得执行 `git add`、`git commit`、`git push`，不得创建、切换或合并分支，也不得改写提交历史。
 - 完成任务后只提供建议的提交范围和 commit message。
 - 即使用户要求提交，也默认不 push；推送必须另有明确要求。
+- GDD 变更记录需要关联提交号时，使用“两步提交”：先提交功能、测试和设计变更，再以独立小型文档提交回填前一提交的短哈希。两步都必须先通过 `$fox-knight-git-safety-gate`，并在执行前向用户展示精确范围、取得明确授权；不得为解决哈希自引用而 amend、改写历史或伪造提交号。
+- 每次维护 GDD、DecisionLog 或版本化 Prototype Test Log 时，检查从最新已关联提交到 `HEAD` 的未登记 Git 历史，包括用户自行创建的提交。用 `git show` 核对实际范围：已确认的设计变化补入 GDD 变更记录；测试证据写入对应 Test Log；纯技术变化交给 TDD。代码与正式设计冲突或提交意图不清时只报告差异，不得静默把实现升级为设计。
+- 关联提交号是定位线索，不是无条件回退指令。执行回退前必须检查提交范围与后续依赖；标记为“基线收录”或包含无关变化的提交不得整笔直接回退。

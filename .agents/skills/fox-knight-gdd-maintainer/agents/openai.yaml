@@ -1,4 +1,4 @@
 interface:
   display_name: "狐狸骑士 GDD 维护"
-  short_description: "审查、同步并按规则维护狐狸骑士 GDD 与设计记录"
-  default_prompt: "使用 $fox-knight-gdd-maintainer 审查并同步本次已确认的设计结论。"
+  short_description: "维护 GDD、DecisionLog 与版本化原型测试记录"
+  default_prompt: "使用 $fox-knight-gdd-maintainer 同步已确认设计，并将试玩证据维护到对应版本记录。"

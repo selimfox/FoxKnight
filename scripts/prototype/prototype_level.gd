@@ -16,10 +16,7 @@ const ARENA_BOUNDS := Rect2(62.0, 72.0, 836.0, 396.0)
 @export_range(0.0, 1.0, 0.01) var settlement_delay: float = 0.18
 
 @export_category("Prototype Slash Forms")
-@export_range(24.0, 400.0, 4.0) var slash_form_distance_threshold: float = 180.0
 @export_range(24.0, 240.0, 2.0) var arc_radius: float = 90.0
-@export_range(0.0, 240.0, 2.0) var arc_move_distance: float = 80.0
-@export_range(0.0, 160.0, 1.0) var arc_direction_deadzone_radius: float = 24.0
 
 @export_category("Prototype Debug")
 @export var show_round_state: bool = false
@@ -142,27 +139,13 @@ func _update_aim(target_position: Vector2) -> void:
 
 	var aim_vector := target_position - _player.global_position
 	var mouse_distance := aim_vector.length()
+	var effective_arc_radius := arc_radius * _prepared_slash.hitbox_tolerance_multiplier
 	_aim_valid = true
-	if mouse_distance < slash_form_distance_threshold:
+	if mouse_distance < effective_arc_radius:
 		_aim_mode = PrototypeSlash.SlashMode.ARC
-		if mouse_distance < arc_direction_deadzone_radius or is_zero_approx(mouse_distance):
-			_aim_direction = Vector2.ZERO
-			_aim_distance = 0.0
-		else:
-			_aim_direction = aim_vector.normalized()
-			_aim_distance = _calculate_allowed_slash_distance(
-				_player.global_position,
-				_aim_direction,
-				arc_move_distance
-			)
-		var effective_radius := arc_radius * _prepared_slash.hitbox_tolerance_multiplier
-		_player.update_arc_aim_preview(
-			effective_radius,
-			arc_direction_deadzone_radius,
-			_aim_direction,
-			_aim_distance,
-			slash_form_distance_threshold
-		)
+		_aim_direction = Vector2.ZERO
+		_aim_distance = 0.0
+		_player.update_arc_aim_preview(effective_arc_radius)
 		return
 
 	_aim_mode = PrototypeSlash.SlashMode.STRAIGHT
@@ -177,7 +160,7 @@ func _update_aim(target_position: Vector2) -> void:
 		_aim_direction,
 		_aim_distance,
 		effective_width,
-		slash_form_distance_threshold
+		effective_arc_radius
 	)
 
 
@@ -271,16 +254,12 @@ func get_aim_preview_radius() -> float:
 	return _player.get_aim_preview_radius()
 
 
-func get_aim_preview_deadzone_radius() -> float:
-	return _player.get_aim_preview_deadzone_radius()
+func get_aim_arc_boundary_radius() -> float:
+	return _player.get_aim_arc_boundary_radius()
 
 
-func get_aim_form_threshold_radius() -> float:
-	return _player.get_aim_form_threshold_radius()
-
-
-func is_aim_form_threshold_visible() -> bool:
-	return _player.is_aim_form_threshold_visible()
+func is_aim_arc_boundary_visible() -> bool:
+	return _player.is_aim_arc_boundary_visible()
 
 
 func is_form_switch_flash_visible() -> bool:
@@ -299,32 +278,21 @@ func get_aim_preview_visual_language() -> String:
 	return _player.get_aim_preview_visual_language()
 
 
-func is_aim_direction_arrow_visible() -> bool:
-	return _player.is_aim_direction_arrow_visible()
-
-
-func is_aim_deadzone_visible() -> bool:
-	return _player.is_aim_deadzone_visible()
-
-
 func get_aim_mode_name() -> String:
 	return PrototypeSlash.SlashMode.keys()[_aim_mode]
-
-
-func get_slash_form_distance_threshold() -> float:
-	return slash_form_distance_threshold
 
 
 func get_arc_radius() -> float:
 	return arc_radius
 
 
-func get_arc_move_distance() -> float:
-	return arc_move_distance
-
-
-func get_arc_direction_deadzone_radius() -> float:
-	return arc_direction_deadzone_radius
+func get_effective_arc_radius() -> float:
+	if is_instance_valid(_prepared_slash):
+		return arc_radius * _prepared_slash.hitbox_tolerance_multiplier
+	var slash := SLASH_SCENE.instantiate() as PrototypeSlash
+	var effective_radius := arc_radius * slash.hitbox_tolerance_multiplier
+	slash.free()
+	return effective_radius
 
 
 func _set_state(next_state: RoundState) -> void:
