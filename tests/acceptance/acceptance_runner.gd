@@ -21,7 +21,12 @@ func _run() -> void:
 	await process_frame
 
 	_expect(level.get_round_state_name() == "OBSERVING", "AC-01: Initial state reaches OBSERVING")
-	_expect(level.get_alive_enemy_count() == 3, "AC-01: Three target enemies are registered")
+	var configured_enemies := _get_target_enemies(level)
+	_expect(not configured_enemies.is_empty(), "AC-01: At least one target enemy is configured")
+	_expect(
+		level.get_alive_enemy_count() == configured_enemies.size(),
+		"AC-01: All configured target enemies are registered without a fixed count"
+	)
 	_expect(level.is_player_input_enabled(), "AC-01: Player input is enabled while observing")
 
 	var debug_enemy := level.get_node("Actors/Enemies/EnemyA") as EnemyController
@@ -114,6 +119,11 @@ func _run() -> void:
 	_expect(is_equal_approx(level.get_aim_preview_width(), 80.0), "AC-01/03: Straight preview uses the effective slash width")
 	player.aim_cancel_requested.emit()
 
+	if not configured_enemies.is_empty():
+		var guaranteed_survivor := configured_enemies[configured_enemies.size() - 1]
+		guaranteed_survivor.move_speed = 0.0
+		guaranteed_survivor.global_position = player.global_position + Vector2.LEFT * 200.0
+
 	var far_target := player.global_position + Vector2.RIGHT * (effective_arc_radius + 20.0)
 	player.aim_started.emit(far_target)
 	player.aim_released.emit(far_target)
@@ -131,7 +141,7 @@ func _run() -> void:
 
 	await create_timer(0.8).timeout
 	_expect(level.get_round_state_name() == "RESOLVED", "AC-04/05: Slash resolves exactly once")
-	_expect(level.get_alive_enemy_count() > 0, "AC-05: Default layout demonstrates a failed partial hit")
+	_expect(level.get_alive_enemy_count() > 0, "AC-05: Any surviving configured target produces failure")
 	_expect(
 		level.get_state_history() == [
 			"INITIALIZING",
@@ -159,13 +169,18 @@ func _run() -> void:
 	await process_frame
 	var arc_player := arc_level.get_node("Actors/Player") as PlayerController
 	var arc_origin := arc_player.global_position
-	var arc_enemies := arc_level.get_node("Actors/Enemies")
-	for child: Node in arc_enemies.get_children():
-		if child is EnemyController:
-			(child as EnemyController).move_speed = 0.0
-	var enemy_a := arc_enemies.get_child(0) as EnemyController
-	var enemy_b := arc_enemies.get_child(1) as EnemyController
-	var enemy_c := arc_enemies.get_child(2) as EnemyController
+	var arc_enemies := _get_target_enemies(arc_level)
+	_expect(arc_enemies.size() >= 3, "AC-03/05: Arc isolation has enough targets for inside/outside coverage")
+	if arc_enemies.size() < 3:
+		arc_level.queue_free()
+		await process_frame
+		_release_all_inputs()
+		_finish()
+		return
+	for enemy: EnemyController in arc_enemies:
+		enemy.move_speed = 0.0
+	var enemy_a := arc_enemies[0]
+	var enemy_b := arc_enemies[1]
 	var initial_arc_target := arc_origin + Vector2.RIGHT * 20.0
 	arc_player.aim_started.emit(initial_arc_target)
 	var prepared_arc := arc_level.get("_prepared_slash") as PrototypeSlash
@@ -174,7 +189,8 @@ func _run() -> void:
 	_expect(is_equal_approx(arc_effective_radius, arc_level.get_arc_radius() * 1.25), "AC-03: Effective arc radius applies the hitbox tolerance exactly once")
 	enemy_a.global_position = arc_origin + Vector2(40.0, 0.0)
 	enemy_b.global_position = arc_origin + Vector2(0.0, arc_effective_radius - 18.0)
-	enemy_c.global_position = arc_origin + Vector2(0.0, arc_effective_radius + 45.0)
+	for index: int in range(2, arc_enemies.size()):
+		arc_enemies[index].global_position = arc_origin + Vector2(0.0, arc_effective_radius + 45.0 + index * 4.0)
 	await physics_frame
 
 	var arc_target := arc_origin + Vector2.RIGHT * (arc_effective_radius - 10.0)
@@ -198,13 +214,62 @@ func _run() -> void:
 	_expect(arc_level.get_round_state_name() == "RESOLVED", "AC-04/05: Arc slash resolves exactly once")
 	_expect(arc_player.global_position.distance_to(arc_origin) < 1.0, "AC-02/03: Arc slash finishes without moving the player")
 	_expect(not is_instance_valid(enemy_a) and not is_instance_valid(enemy_b), "AC-03: Stationary arc circle hits enemies inside its radius")
-	_expect(is_instance_valid(enemy_c) and enemy_c.is_alive(), "AC-03: Enemy outside the stationary arc circle remains alive")
-	_expect(arc_level.get_alive_enemy_count() == 1, "AC-05: Arc test resolves with the expected survivor")
+	var all_outside_enemies_survived := true
+	for index: int in range(2, arc_enemies.size()):
+		if not is_instance_valid(arc_enemies[index]) or not arc_enemies[index].is_alive():
+			all_outside_enemies_survived = false
+	_expect(all_outside_enemies_survived, "AC-03: Every enemy outside the stationary arc circle remains alive")
+	_expect(
+		arc_level.get_alive_enemy_count() == arc_enemies.size() - 2,
+		"AC-05: Any number of surviving targets produces failure"
+	)
 
 	arc_level.queue_free()
 	await process_frame
+
+	_release_all_inputs()
+	var victory_level := packed_scene.instantiate() as PrototypeLevel
+	root.add_child(victory_level)
+	await process_frame
+	await process_frame
+	var victory_player := victory_level.get_node("Actors/Player") as PlayerController
+	var victory_origin := victory_player.global_position
+	var victory_enemies := _get_target_enemies(victory_level)
+	_expect(
+		victory_enemies.size() == configured_enemies.size(),
+		"AC-04: Victory isolation uses every target configured by the current scene"
+	)
+	for enemy: EnemyController in victory_enemies:
+		enemy.move_speed = 0.0
+	var victory_initial_target := victory_origin + Vector2.RIGHT * 20.0
+	victory_player.aim_started.emit(victory_initial_target)
+	var victory_radius := victory_level.get_effective_arc_radius()
+	for index: int in range(victory_enemies.size()):
+		var angle := TAU * float(index) / float(maxi(victory_enemies.size(), 1))
+		victory_enemies[index].global_position = victory_origin + Vector2.RIGHT.rotated(angle) * (victory_radius * 0.5)
+	await physics_frame
+	var victory_target := victory_origin + Vector2.RIGHT * (victory_radius - 10.0)
+	victory_player.aim_released.emit(victory_target)
+	await create_timer(0.8).timeout
+	_expect(victory_level.get_round_state_name() == "RESOLVED", "AC-04: All-target slash resolves exactly once")
+	_expect(victory_level.get_alive_enemy_count() == 0, "AC-04: Killing every configured target leaves zero survivors")
+	var victory_label := victory_level.get_node("HUD/Root/ResultPanel/ResultLabel") as Label
+	_expect(victory_label.text == "胜 利", "AC-04: Zero surviving targets produces the victory result")
+	victory_level.queue_free()
+	await process_frame
 	_release_all_inputs()
 	_finish()
+
+
+func _get_target_enemies(level: PrototypeLevel) -> Array[EnemyController]:
+	var result: Array[EnemyController] = []
+	var enemy_container := level.get_node_or_null("Actors/Enemies")
+	if enemy_container == null:
+		return result
+	for child: Node in enemy_container.get_children():
+		if child is EnemyController:
+			result.append(child as EnemyController)
+	return result
 
 
 func _release_all_inputs() -> void:
