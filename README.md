@@ -2,6 +2,8 @@
 
 独立游戏项目。当前游戏设计与开发范围以 `docs/GDD.md` 为准。
 
+GDD v0.1 阶段已正式结算，当前保留为设计与技术冻结基线；v0.2 范围尚未确认，也尚未建立对应 GDD、TDD 或 Prototype Test Log。
+
 ## 项目结构
 
 ```text
@@ -29,7 +31,7 @@ FoxKnight/
 ├── assets/
 │   ├── art/                   # 美术资源
 │   └── audio/                 # 音频资源
-└── project.godot              # Godot 项目入口（未来建立）
+└── project.godot              # Godot 项目入口
 ```
 
 `docs/GDD.docx` 若存在，只是 `docs/GDD.md` 的阅读和展示副本，不是设计来源。
@@ -42,6 +44,8 @@ FoxKnight/
 2. `docs/OnePaper.md`
 3. `docs/GDD.md`
 4. `docs/DecisionLog.md`
+5. `docs/playtest/PrototypeTestLog_v0.1.md`（查阅 v0.1 逐次验收与试玩证据）
+6. `docs/TDD.md`（进入实现、调试或技术审查时阅读）
 
 使用 agent 工作时，先阅读根目录 `AGENTS.md`，再按任务类型进入相应角色文件：
 
