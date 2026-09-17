@@ -2,21 +2,21 @@
 
 | 文档字段 | 内容 |
 | --- | --- |
-| 当前技术基线 | `docs/TDD_v0.1.md` |
-| 对应设计 | `docs/GDD.md` v0.1 阶段结算基线 |
+| 当前技术基线 | `docs/TDD_v0.2.md` |
+| 对应设计 | `docs/GDD.md` v0.2 |
 | 维护角色 | Coding Agent |
-| 更新日期 | 2026-08-26 |
+| 更新日期 | 2026-09-17 |
 
 ## 文档职责
 
-本文件是当前技术设计的固定入口。版本化技术内容放在对应的 `TDD_vX.Y.md` 中；当前 Coding Agent 应读取 `docs/TDD_v0.1.md`。
+本文件是当前技术设计的固定入口。版本化技术内容放在对应的 `TDD_vX.Y.md` 中；当前 Coding Agent 应读取 `docs/TDD_v0.2.md`。
 
 TDD 说明如何实现已确认设计，不定义玩法，也不得覆盖 GDD。发生冲突时以 `docs/GDD.md` 为准，并把需要改变设计的问题交回 Architecture Agent。
 
 ## 当前状态
 
-- v0.1 Prototype 技术基线：`docs/TDD_v0.1.md`（阶段结算已确认，作为当前冻结基线保留）。
-- 当前未建立其他版本的 TDD；在 GDD 明确升级并确认下一版本范围前，不创建或切换新的技术基线。
+- v0.2 Prototype 当前技术基线：`docs/TDD_v0.2.md`。
+- v0.1 技术结算基线：`docs/TDD_v0.1.md`，继续冻结保留，不覆盖或删除。
 
 ## 维护规则
 

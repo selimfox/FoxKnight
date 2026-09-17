@@ -1,217 +1,85 @@
-[gd_scene format=3 uid="uid://c5wqqxa5wtxra"]
+[gd_scene load_steps=10 format=3]
 
-[ext_resource type="Script" uid="uid://bd0n1aw2besrk" path="res://scripts/prototype/prototype_level.gd" id="1_level"]
-[ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="2_player"]
-[ext_resource type="PackedScene" path="res://scenes/actors/enemy.tscn" id="3_enemy"]
-[ext_resource type="Script" uid="uid://b1pnoj7u3m833" path="res://scripts/feedback/feedback_controller.gd" id="4_feedback"]
-[ext_resource type="PackedScene" path="res://scenes/ui/prototype_hud.tscn" id="5_hud"]
-[ext_resource type="Texture2D" uid="uid://ko01qcucil6p" path="res://assets/art/generated/sprites/floor_tile.png" id="6_floor_art"]
-[ext_resource type="Texture2D" uid="uid://btl0w4kaww0uu" path="res://assets/art/generated/sprites/wall_tile.png" id="7_wall_art"]
-
-[sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
+[ext_resource type="Script" path="res://scripts/prototype/prototype_level.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/actors/enemy.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/feedback/feedback_controller.gd" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/prototype_hud.tscn" id="5"]
+[sub_resource type="RectangleShape2D" id="Horizontal"]
 size = Vector2(880, 22)
-
-[sub_resource type="RectangleShape2D" id="BoundaryVertical"]
+[sub_resource type="RectangleShape2D" id="Vertical"]
 size = Vector2(22, 440)
 
-[sub_resource type="StyleBoxFlat" id="RoomLabelStyle"]
-bg_color = Color(0.08, 0.055, 0.11, 0.88)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.28, 0.17, 0.34, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[node name="PrototypeLevel" type="Node2D" unique_id=1235542066]
-script = ExtResource("1_level")
+[node name="PrototypeLevel" type="Node2D"]
+script = ExtResource("1")
 settlement_delay = 0.25
 arc_radius = 110.0
-
-[node name="Arena" type="Node2D" parent="." unique_id=1407053309]
-
-[node name="Backdrop" type="Polygon2D" parent="Arena" unique_id=1497354864]
+[node name="Arena" type="Node2D" parent="."]
+[node name="Backdrop" type="Polygon2D" parent="Arena"]
 color = Color(0.025, 0.02, 0.045, 1)
 polygon = PackedVector2Array(0, 0, 960, 0, 960, 540, 0, 540)
-
-[node name="Floor" type="Polygon2D" parent="Arena" unique_id=970309093]
+[node name="Floor" type="Polygon2D" parent="Arena"]
 color = Color(0.105, 0.075, 0.13, 1)
 polygon = PackedVector2Array(48, 58, 912, 58, 912, 482, 48, 482)
-
-[node name="FloorInset" type="Polygon2D" parent="Arena" unique_id=1237120562]
+[node name="FloorInset" type="Polygon2D" parent="Arena"]
 color = Color(0.075, 0.055, 0.105, 1)
 polygon = PackedVector2Array(66, 76, 894, 76, 894, 464, 66, 464)
-
-[node name="ArtTiles" type="Node2D" parent="Arena" unique_id=970105966]
-
-[node name="FloorA" type="Sprite2D" parent="Arena/ArtTiles" unique_id=1501499246]
-modulate = Color(1, 1, 1, 0.34)
-texture_filter = 1
-position = Vector2(205, 175)
-scale = Vector2(0.62, 0.62)
-texture = ExtResource("6_floor_art")
-
-[node name="FloorB" type="Sprite2D" parent="Arena/ArtTiles" unique_id=2108759714]
-modulate = Color(1, 1, 1, 0.34)
-texture_filter = 1
-position = Vector2(480, 175)
-scale = Vector2(0.62, 0.62)
-texture = ExtResource("6_floor_art")
-
-[node name="FloorC" type="Sprite2D" parent="Arena/ArtTiles" unique_id=1268829182]
-modulate = Color(1, 1, 1, 0.34)
-texture_filter = 1
-position = Vector2(755, 175)
-scale = Vector2(0.62, 0.62)
-texture = ExtResource("6_floor_art")
-
-[node name="FloorD" type="Sprite2D" parent="Arena/ArtTiles" unique_id=711588542]
-modulate = Color(1, 1, 1, 0.34)
-texture_filter = 1
-position = Vector2(340, 375)
-scale = Vector2(0.62, 0.62)
-texture = ExtResource("6_floor_art")
-
-[node name="FloorE" type="Sprite2D" parent="Arena/ArtTiles" unique_id=1018748049]
-modulate = Color(1, 1, 1, 0.34)
-texture_filter = 1
-position = Vector2(620, 375)
-scale = Vector2(0.62, 0.62)
-texture = ExtResource("6_floor_art")
-
-[node name="WallA" type="Sprite2D" parent="Arena/ArtTiles" unique_id=546443051]
-modulate = Color(1, 1, 1, 0.78)
-texture_filter = 1
-position = Vector2(170, 76)
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("7_wall_art")
-
-[node name="WallB" type="Sprite2D" parent="Arena/ArtTiles" unique_id=1536850947]
-modulate = Color(1, 1, 1, 0.78)
-texture_filter = 1
-position = Vector2(480, 76)
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("7_wall_art")
-
-[node name="WallC" type="Sprite2D" parent="Arena/ArtTiles" unique_id=1013473865]
-modulate = Color(1, 1, 1, 0.78)
-texture_filter = 1
-position = Vector2(790, 76)
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("7_wall_art")
-
-[node name="CenterPath" type="Polygon2D" parent="Arena" unique_id=1913858481]
-color = Color(0.12, 0.085, 0.14, 1)
-polygon = PackedVector2Array(76, 236, 884, 236, 884, 304, 76, 304)
-
-[node name="RuneA" type="Polygon2D" parent="Arena" unique_id=21122823]
-position = Vector2(-1, 1)
-color = Color(0.19, 0.11, 0.21, 1)
-polygon = PackedVector2Array(432, 270, 480, 222, 528, 270, 480, 318)
-
-[node name="RuneB" type="Polygon2D" parent="Arena" unique_id=2038952453]
-color = Color(0.09, 0.06, 0.12, 1)
-polygon = PackedVector2Array(452, 270, 480, 242, 508, 270, 480, 298)
-
-[node name="BoundaryVisualTop" type="Polygon2D" parent="Arena" unique_id=1137437239]
+[node name="BoundaryVisualTop" type="Polygon2D" parent="Arena"]
 color = Color(0.25, 0.15, 0.29, 1)
 polygon = PackedVector2Array(38, 48, 922, 48, 912, 68, 48, 68)
-
-[node name="BoundaryVisualBottom" type="Polygon2D" parent="Arena" unique_id=634153323]
+[node name="BoundaryVisualBottom" type="Polygon2D" parent="Arena"]
 color = Color(0.25, 0.15, 0.29, 1)
 polygon = PackedVector2Array(48, 472, 912, 472, 922, 492, 38, 492)
-
-[node name="BoundaryVisualLeft" type="Polygon2D" parent="Arena" unique_id=992578826]
+[node name="BoundaryVisualLeft" type="Polygon2D" parent="Arena"]
 color = Color(0.2, 0.12, 0.25, 1)
 polygon = PackedVector2Array(38, 48, 58, 68, 58, 472, 38, 492)
-
-[node name="BoundaryVisualRight" type="Polygon2D" parent="Arena" unique_id=451078597]
+[node name="BoundaryVisualRight" type="Polygon2D" parent="Arena"]
 color = Color(0.2, 0.12, 0.25, 1)
 polygon = PackedVector2Array(902, 68, 922, 48, 922, 492, 902, 472)
-
-[node name="Boundaries" type="StaticBody2D" parent="Arena" unique_id=1362706168]
+[node name="Boundaries" type="StaticBody2D" parent="Arena"]
 collision_mask = 6
-
-[node name="Top" type="CollisionShape2D" parent="Arena/Boundaries" unique_id=1312967262]
+[node name="Top" type="CollisionShape2D" parent="Arena/Boundaries"]
 position = Vector2(480, 48)
-shape = SubResource("BoundaryHorizontal")
-
-[node name="Bottom" type="CollisionShape2D" parent="Arena/Boundaries" unique_id=1556226290]
+shape = SubResource("Horizontal")
+[node name="Bottom" type="CollisionShape2D" parent="Arena/Boundaries"]
 position = Vector2(480, 492)
-shape = SubResource("BoundaryHorizontal")
-
-[node name="Left" type="CollisionShape2D" parent="Arena/Boundaries" unique_id=450615190]
+shape = SubResource("Horizontal")
+[node name="Left" type="CollisionShape2D" parent="Arena/Boundaries"]
 position = Vector2(44, 270)
-shape = SubResource("BoundaryVertical")
-
-[node name="Right" type="CollisionShape2D" parent="Arena/Boundaries" unique_id=625565685]
+shape = SubResource("Vertical")
+[node name="Right" type="CollisionShape2D" parent="Arena/Boundaries"]
 position = Vector2(916, 270)
-shape = SubResource("BoundaryVertical")
-
-[node name="RoomLabel" type="Panel" parent="Arena" unique_id=221147073]
-offset_left = 386.0
-offset_top = 82.0
-offset_right = 574.0
-offset_bottom = 121.0
-theme_override_styles/panel = SubResource("RoomLabelStyle")
-
-[node name="Label" type="Label" parent="Arena/RoomLabel" unique_id=832866113]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 7.0
-offset_right = 180.0
-offset_bottom = 32.0
-theme_override_colors/font_color = Color(0.7, 0.55, 0.74, 1)
-theme_override_font_sizes/font_size = 14
-text = "FOX KNIGHT  //  ONE CUT"
-horizontal_alignment = 1
-
-[node name="Actors" type="Node2D" parent="." unique_id=341906784]
-
-[node name="Player" parent="Actors" unique_id=1263834482 instance=ExtResource("2_player")]
+shape = SubResource("Vertical")
+[node name="Actors" type="Node2D" parent="."]
+[node name="Player" parent="Actors" instance=ExtResource("2")]
 position = Vector2(280, 270)
-
-[node name="Enemies" type="Node2D" parent="Actors" unique_id=482204018]
-
-[node name="EnemyA" parent="Actors/Enemies" unique_id=1320090785 instance=ExtResource("3_enemy")]
+[node name="Enemies" type="Node2D" parent="Actors"]
+[node name="EnemyA" parent="Actors/Enemies" instance=ExtResource("3")]
 position = Vector2(442, 171)
 move_speed = 120.0
 patrol_distance = 60.0
-
-[node name="EnemyB" parent="Actors/Enemies" unique_id=2052732593 instance=ExtResource("3_enemy")]
+[node name="EnemyB" parent="Actors/Enemies" instance=ExtResource("3")]
 position = Vector2(642, 171)
 move_speed = 120.0
 move_direction = Vector2(-1, 0)
 patrol_distance = 60.0
-
-[node name="EnemyC" parent="Actors/Enemies" unique_id=158533018 instance=ExtResource("3_enemy")]
+[node name="EnemyC" parent="Actors/Enemies" instance=ExtResource("3")]
 position = Vector2(441, 371)
 move_speed = 120.0
 move_direction = Vector2(1, 0)
 patrol_distance = 60.0
-
-[node name="EnemyD" parent="Actors/Enemies" unique_id=780662054 instance=ExtResource("3_enemy")]
+[node name="EnemyD" parent="Actors/Enemies" instance=ExtResource("3")]
 position = Vector2(642, 371)
 move_speed = 120.0
 move_direction = Vector2(0, -1)
 patrol_distance = 60.0
-
-[node name="Effects" type="Node2D" parent="." unique_id=750227141]
-
-[node name="FixedCamera" type="Camera2D" parent="." unique_id=1251009620]
+[node name="Effects" type="Node2D" parent="."]
+[node name="FixedCamera" type="Camera2D" parent="."]
 position = Vector2(480, 270)
-
-[node name="FeedbackController" type="Node" parent="." unique_id=2028322963]
-script = ExtResource("4_feedback")
-
-[node name="SlashAudio" type="AudioStreamPlayer" parent="FeedbackController" unique_id=826361570]
-
-[node name="HitAudio" type="AudioStreamPlayer" parent="FeedbackController" unique_id=842973359]
+[node name="FeedbackController" type="Node" parent="."]
+script = ExtResource("4")
+[node name="SlashAudio" type="AudioStreamPlayer" parent="FeedbackController"]
+[node name="HitAudio" type="AudioStreamPlayer" parent="FeedbackController"]
 max_polyphony = 3
-
-[node name="ResultAudio" type="AudioStreamPlayer" parent="FeedbackController" unique_id=1101132133]
-
-[node name="HUD" parent="." unique_id=461798701 instance=ExtResource("5_hud")]
+[node name="ResultAudio" type="AudioStreamPlayer" parent="FeedbackController"]
+[node name="HUD" parent="." instance=ExtResource("5")]

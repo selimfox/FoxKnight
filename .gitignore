@@ -8,6 +8,7 @@
 
 # Local safety backups and transient validation evidence
 /backups/
+/output/
 /work/skill-staging/
 /work/*.log
 /work/*.png

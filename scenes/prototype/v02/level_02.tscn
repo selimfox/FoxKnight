@@ -1,0 +1,114 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/prototype/v02/level_controller.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/world/v02/terrain_grid.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/v02/terrain_cell.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/actors/v02/infantry.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/actors/v02/archer.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/v02/v02_hud.tscn" id="6"]
+
+[node name="Level02" type="Node2D"]
+script = ExtResource("1")
+adjustment_count = 2
+arc_radius = 96.0
+[node name="Backdrop" type="Polygon2D" parent="."]
+color = Color(0.025, 0.02, 0.045, 1)
+polygon = PackedVector2Array(0, 0, 960, 0, 960, 540, 0, 540)
+[node name="TerrainGrid" type="Node2D" parent="."]
+script = ExtResource("2")
+[node name="C2_1" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(288, 158)
+[node name="C3_1" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(352, 158)
+[node name="C4_1" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(416, 158)
+[node name="C5_1" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(480, 158)
+[node name="C6_1" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(544, 158)
+[node name="C7_1" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(608, 158)
+[node name="C8_1" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(672, 158)
+[node name="C2_2" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(288, 222)
+[node name="C3_2" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(352, 222)
+[node name="C4_2" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(416, 222)
+[node name="C5_2" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(480, 222)
+[node name="C6_2" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(544, 222)
+[node name="C7_2" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(608, 222)
+[node name="C8_2" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(672, 222)
+[node name="C2_3" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(288, 286)
+[node name="C3_3" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(352, 286)
+[node name="C4_3" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(416, 286)
+[node name="C5_3" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(480, 286)
+[node name="C6_3" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(544, 286)
+[node name="C7_3" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(608, 286)
+[node name="C8_3" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(672, 286)
+[node name="C2_4" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(288, 350)
+[node name="C3_4" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(352, 350)
+[node name="C4_4" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(416, 350)
+[node name="C5_4" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(480, 350)
+[node name="C6_4" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(544, 350)
+[node name="C7_4" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(608, 350)
+[node name="C8_4" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(672, 350)
+[node name="C2_5" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(288, 414)
+[node name="C3_5" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(352, 414)
+[node name="C4_5" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(416, 414)
+[node name="C5_5" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(480, 414)
+[node name="C6_5" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(544, 414)
+[node name="C7_5" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(608, 414)
+[node name="C8_5" parent="TerrainGrid" instance=ExtResource("7")]
+position = Vector2(672, 414)
+[node name="Actors" type="Node2D" parent="."]
+[node name="Player" parent="Actors" instance=ExtResource("3")]
+position = Vector2(480, 350)
+[node name="Enemies" type="Node2D" parent="Actors"]
+[node name="InfantryA" parent="Actors/Enemies" instance=ExtResource("4")]
+position = Vector2(352, 158)
+move_speed = 96.0
+detection_radius = 420.0
+[node name="InfantryB" parent="Actors/Enemies" instance=ExtResource("4")]
+position = Vector2(608, 158)
+move_speed = 88.0
+detection_radius = 420.0
+[node name="ArcherA" parent="Actors/Enemies" instance=ExtResource("5")]
+position = Vector2(288, 286)
+preferred_min_distance = 190.0
+preferred_max_distance = 280.0
+[node name="ArcherB" parent="Actors/Enemies" instance=ExtResource("5")]
+position = Vector2(672, 286)
+preferred_min_distance = 190.0
+preferred_max_distance = 280.0
+[node name="Projectiles" type="Node2D" parent="."]
+[node name="Effects" type="Node2D" parent="."]
+[node name="FixedCamera" type="Camera2D" parent="."]
+position = Vector2(480, 270)
+[node name="HUD" parent="." instance=ExtResource("6")]

@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://v8f04jpvypps"]
+
+[ext_resource type="Script" uid="uid://c08hx2mbiw8w1" path="res://scripts/prototype/v02/level_controller.gd" id="1"]
+[ext_resource type="Script" uid="uid://b5jpvfdhjxsuw" path="res://scripts/world/v02/terrain_grid.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/actors/v02/infantry.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/v02/v02_hud.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/world/v02/terrain_cell.tscn" id="7"]
+
+[node name="Level01" type="Node2D" unique_id=1003884290]
+script = ExtResource("1")
+adjustment_count = 1
+arc_radius = 96.0
+
+[node name="Backdrop" type="Polygon2D" parent="." unique_id=649840991]
+color = Color(0.025, 0.02, 0.045, 1)
+polygon = PackedVector2Array(0, 0, 960, 0, 960, 540, 0, 540)
+
+[node name="TerrainGrid2" type="Node2D" parent="." unique_id=628954]
+position = Vector2(0, -138)
+script = ExtResource("2")
+
+[node name="C2_3" parent="TerrainGrid2" unique_id=612803984 instance=ExtResource("7")]
+position = Vector2(280, 286)
+
+[node name="C3_3" parent="TerrainGrid2" unique_id=612707318 instance=ExtResource("7")]
+position = Vector2(344, 286)
+
+[node name="C4_3" parent="TerrainGrid2" unique_id=1963226520 instance=ExtResource("7")]
+position = Vector2(408, 286)
+
+[node name="C5_3" parent="TerrainGrid2" unique_id=946152804 instance=ExtResource("7")]
+position = Vector2(472, 286)
+
+[node name="C6_3" parent="TerrainGrid2" unique_id=270019340 instance=ExtResource("7")]
+position = Vector2(536, 286)
+
+[node name="C7_3" parent="TerrainGrid2" unique_id=1615681875 instance=ExtResource("7")]
+position = Vector2(600, 286)
+
+[node name="C8_3" parent="TerrainGrid2" unique_id=1303376944 instance=ExtResource("7")]
+position = Vector2(664, 286)
+
+[node name="C9_3" parent="TerrainGrid2" unique_id=96033598 instance=ExtResource("7")]
+position = Vector2(728, 286)
+
+[node name="TerrainGrid3" type="Node2D" parent="." unique_id=61726888]
+position = Vector2(0, 64)
+script = ExtResource("2")
+
+[node name="C2_3" parent="TerrainGrid3" unique_id=557765350 instance=ExtResource("7")]
+position = Vector2(280, 286)
+
+[node name="C3_3" parent="TerrainGrid3" unique_id=398173964 instance=ExtResource("7")]
+position = Vector2(344, 286)
+
+[node name="C4_3" parent="TerrainGrid3" unique_id=576340008 instance=ExtResource("7")]
+position = Vector2(408, 286)
+
+[node name="C5_3" parent="TerrainGrid3" unique_id=2121345560 instance=ExtResource("7")]
+position = Vector2(472, 286)
+
+[node name="C6_3" parent="TerrainGrid3" unique_id=194319180 instance=ExtResource("7")]
+position = Vector2(536, 286)
+
+[node name="C7_3" parent="TerrainGrid3" unique_id=679525763 instance=ExtResource("7")]
+position = Vector2(600, 286)
+
+[node name="C8_3" parent="TerrainGrid3" unique_id=459589812 instance=ExtResource("7")]
+position = Vector2(664, 286)
+
+[node name="C9_3" parent="TerrainGrid3" unique_id=1445634839 instance=ExtResource("7")]
+position = Vector2(728, 286)
+
+[node name="Actors" type="Node2D" parent="." unique_id=956807938]
+
+[node name="Player" parent="Actors" unique_id=1874380169 instance=ExtResource("3")]
+position = Vector2(280, 144)
+
+[node name="Enemies" type="Node2D" parent="Actors" unique_id=1964765769]
+
+[node name="InfantryB" parent="Actors/Enemies" unique_id=1635711113 instance=ExtResource("4")]
+position = Vector2(728, 345)
+detection_radius = 464.0
+move_speed = 82.0
+
+[node name="Projectiles" type="Node2D" parent="." unique_id=333896528]
+
+[node name="Effects" type="Node2D" parent="." unique_id=1472155723]
+
+[node name="FixedCamera" type="Camera2D" parent="." unique_id=1237834786]
+position = Vector2(480, 270)
+
+[node name="HUD" parent="." unique_id=773959893 instance=ExtResource("6")]

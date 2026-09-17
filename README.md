@@ -2,7 +2,7 @@
 
 独立游戏项目。当前游戏设计与开发范围以 `docs/GDD.md` 为准。
 
-GDD v0.1 阶段已正式结算，当前保留为设计与技术冻结基线；v0.2 范围尚未确认，也尚未建立对应 GDD、TDD 或 Prototype Test Log。
+GDD v0.2 已建立，当前进入“有限战前地形调整、差异化敌人、战中塑造局面与多关卡流程”的 Prototype 开发；v0.1 设计、技术与试玩记录继续作为冻结历史基线保留。
 
 ## 项目结构
 
@@ -23,9 +23,11 @@ FoxKnight/
 │   ├── DecisionLog.md         # 重要设计变化及原因
 │   ├── SkillRoadmap.md        # 能力建设与验证计划
 │   ├── TDD.md                 # 当前技术设计入口
-│   ├── TDD_v0.1.md            # v0.1 Prototype 技术实现基线
+│   ├── TDD_v0.1.md            # v0.1 Prototype 冻结技术基线
+│   ├── TDD_v0.2.md            # 当前 v0.2 Prototype 技术实现基线
 │   ├── playtest/              # 与 GDD 版本绑定的 Prototype 测试记录
-│   │   └── PrototypeTestLog_v0.1.md
+│   │   ├── PrototypeTestLog_v0.1.md
+│   │   └── PrototypeTestLog_v0.2.md
 │   └── archive/               # 历史文档
 ├── scripts/                   # Godot 脚本
 ├── assets/
@@ -44,7 +46,7 @@ FoxKnight/
 2. `docs/OnePaper.md`
 3. `docs/GDD.md`
 4. `docs/DecisionLog.md`
-5. `docs/playtest/PrototypeTestLog_v0.1.md`（查阅 v0.1 逐次验收与试玩证据）
+5. `docs/playtest/PrototypeTestLog_v0.2.md`（记录当前 v0.2 逐次验收与试玩证据）
 6. `docs/TDD.md`（进入实现、调试或技术审查时阅读）
 
 使用 agent 工作时，先阅读根目录 `AGENTS.md`，再按任务类型进入相应角色文件：

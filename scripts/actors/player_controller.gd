@@ -43,6 +43,8 @@ var _arc_boundary_breath_elapsed := 0.0
 var _last_attack_pose := "NONE"
 var _form_switch_feedback_count := 0
 var _form_switch_tween: Tween
+var _terrain_grid: Node
+var _terrain_body_radius: float = 15.0
 
 @onready var _visual: Node2D = $Visual
 @onready var _sprite: Sprite2D = $Visual/Sprite
@@ -79,7 +81,10 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, deceleration * delta)
 		_set_movement_texture(false)
 
-	move_and_slide()
+	if _terrain_grid == null:
+		move_and_slide()
+	else:
+		_move_on_terrain(delta)
 
 
 func _process(delta: float) -> void:
@@ -118,6 +123,26 @@ func set_input_enabled(enabled: bool) -> void:
 	if not enabled:
 		velocity = Vector2.ZERO
 		clear_aim_preview()
+
+
+func set_terrain_grid(grid: Node, body_radius: float = 15.0) -> void:
+	_terrain_grid = grid
+	_terrain_body_radius = maxf(body_radius, 0.0)
+
+
+func _move_on_terrain(delta: float) -> void:
+	var displacement := velocity * delta
+	var target := global_position + displacement
+	if _terrain_grid.call("is_world_circle_walkable", target, _terrain_body_radius):
+		global_position = target
+		return
+
+	var x_target := global_position + Vector2(displacement.x, 0.0)
+	if _terrain_grid.call("is_world_circle_walkable", x_target, _terrain_body_radius):
+		global_position = x_target
+	var y_target := global_position + Vector2(0.0, displacement.y)
+	if _terrain_grid.call("is_world_circle_walkable", y_target, _terrain_body_radius):
+		global_position = y_target
 
 
 func is_input_enabled() -> bool:

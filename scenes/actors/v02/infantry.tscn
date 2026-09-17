@@ -1,0 +1,41 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/actors/v02/infantry_controller.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/v02_enemy_roles_v1.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/death_burst.png" id="6"]
+[sub_resource type="AtlasTexture" id="InfantryAtlas"]
+atlas = ExtResource("2")
+region = Rect2(0, 0, 1024, 768)
+[sub_resource type="RectangleShape2D" id="Shape"]
+size = Vector2(28, 28)
+[node name="Infantry" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1")
+move_speed = 92.0
+idle_texture = SubResource("InfantryAtlas")
+walk_texture = SubResource("InfantryAtlas")
+hit_texture = SubResource("InfantryAtlas")
+death_texture = SubResource("InfantryAtlas")
+[node name="Visual" type="Node2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+texture_filter = 1
+texture = SubResource("InfantryAtlas")
+scale = Vector2(0.085, 0.085)
+[node name="DeathBurst" type="Sprite2D" parent="Visual"]
+visible = false
+texture = ExtResource("6")
+scale = Vector2(0.32, 0.32)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape")
+[node name="StateLabel" type="Label" parent="."]
+offset_left = -42.0
+offset_top = -50.0
+offset_right = 42.0
+offset_bottom = -26.0
+theme_override_colors/font_color = Color(1, 0.74, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.025, 0.015, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "步兵"
+horizontal_alignment = 1
