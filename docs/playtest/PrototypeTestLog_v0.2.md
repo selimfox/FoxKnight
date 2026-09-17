@@ -29,7 +29,7 @@
 | 字段 | 内容 |
 | --- | --- |
 | 日期 | 2026-09-12 |
-| Build | 当前未提交工作区；Godot 4.7.1 stable |
+| Build | `a2bd851`（首次纳入仓库；测试时为提交前工作区）；Godot 4.7.1 stable |
 | 场景 | `prototype_campaign.tscn` 与三个默认 v0.2 关卡场景 |
 | 关键配置 | 每关可分别编辑地面格、敌人实例与参数；第 1 关默认 2 次地形调整、2 步兵、1 弓手 |
 | 自动功能验收 | `RESULT \| PASS \| v0.2 functional acceptance` |
@@ -64,7 +64,7 @@
 | 字段 | 内容 |
 | --- | --- |
 | 日期 | 2026-09-13 |
-| Build | 当前未提交工作区；Godot 4.7.1 stable |
+| Build | `a2bd851`（首次纳入仓库；测试时为提交前工作区）；Godot 4.7.1 stable |
 | 变更 | 删除地块中心点；可拖地块使用绿色缓慢呼吸；加入逐步撤回；步兵与弓手使用不同角色图像；修正弓手无退路时仍可射击 |
 | 自动功能验收 | `RESULT \| PASS \| v0.2 functional acceptance` |
 | v0.1 回归 | `RESULT \| PASS \| Prototype smoke acceptance` |
@@ -98,7 +98,7 @@
 | 字段 | 内容 |
 | --- | --- |
 | 日期 | 2026-09-15 |
-| Build | 当前未提交工作区；Godot 4.7.1 stable |
+| Build | `a2bd851`（首次纳入仓库；测试时为提交前工作区）；Godot 4.7.1 stable |
 | 场景 | 运行时构造的合法双 TerrainGrid Level02、错误配置夹具、当前用户编排 Level01、默认 Level03 |
 | 关键配置 | 地形与敌人共享 3 次调整；敌人可放到任意距离、任意独立区域的现有空地；双 chunk 共同形成 35 格聚合地图 |
 | 自动功能验收 | `RESULT \| PASS \| v0.2 functional acceptance` |
@@ -141,7 +141,7 @@
 | 字段 | 内容 |
 | --- | --- |
 | 日期 | 2026-09-17 |
-| Build | 当前未提交工作区；Godot 4.7.1 stable |
+| Build | `a2bd851`（首次纳入仓库；测试时为提交前工作区）；Godot 4.7.1 stable |
 | 触发场景 | 创作者再次移动 Level01 的 TerrainGrid 与敌人后，固定 `grid_origin` 将地块判为超出容差并关闭全部拖动 |
 | 自动功能验收 | `RESULT \| PASS \| v0.2 functional acceptance` |
 | v0.1 回归 | `RESULT \| PASS \| Prototype smoke acceptance` |
