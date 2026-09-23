@@ -12,7 +12,7 @@
 
 ## B.1 天之锁与连斩原型（2026-09-24）
 
-- Build：当前工作区，待首次实现提交关联；主场景 `scenes/prototype/v03/level_01.tscn`。
+- Build：`f4eda23`；主场景 `scenes/prototype/v03/level_01.tscn`。
 - 前置基线：`088c1c5` 无战前拖格操作；历史 `df9ec98` 的文档与旧测试保留。
 - 关键配置：N=1；禁锢2秒/冷却4秒；续斩窗口真实2秒、倍率0.08、恢复0.12秒；弹幕/尸体其余数值见当前默认资源。
 - 功能检查：Godot 4.7.1 执行 `--headless --path . --script res://tests/acceptance/v03_acceptance_runner.gd`，退出码 0，`RESULT | PASS | v0.3 acceptance | 60 checks, 0 failures`。覆盖 AC-01～10 的确定性规则，包括原生 TileMap 改画与父节点移动、动态增删雕塑、锁首目标/墙/射程/冷却、两种弹幕、反射与高速扫掠、仅直杀满足 N、三刀交替、真实时间超时、迟到友弹/尸体全灭、伤害阶段、重试与结果冻结。模拟 E → 按住瞄准 → 松开首刀 → 新点击续斩输入流程通过。
