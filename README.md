@@ -2,7 +2,7 @@
 
 独立游戏项目。当前游戏设计与开发范围以 `docs/GDD.md` 为准。
 
-GDD v0.2 已建立，当前进入“有限战前地形调整、差异化敌人、战中塑造局面与多关卡流程”的 Prototype 开发；v0.1 设计、技术与试玩记录继续作为冻结历史基线保留。
+当前为 GDD v0.3 Prototype：无战前拖格的战斗入口。玩法以 GDD 为准；v0.1/v0.2 设计、技术与测试证据保留为历史对照。本轮实现与验收状态见对应 Test Log。
 
 ## 项目结构
 
@@ -24,10 +24,13 @@ FoxKnight/
 │   ├── SkillRoadmap.md        # 能力建设与验证计划
 │   ├── TDD.md                 # 当前技术设计入口
 │   ├── TDD_v0.1.md            # v0.1 Prototype 冻结技术基线
-│   ├── TDD_v0.2.md            # 当前 v0.2 Prototype 技术实现基线
+│   ├── TDD_v0.2.md            # v0.2 历史技术基线
+│   ├── TDD_v0.3.md            # 当前技术实现基线
+│   ├── guides/v03_level_editing.md # 当前关卡编辑与参数入口
 │   ├── playtest/              # 与 GDD 版本绑定的 Prototype 测试记录
 │   │   ├── PrototypeTestLog_v0.1.md
-│   │   └── PrototypeTestLog_v0.2.md
+│   │   ├── PrototypeTestLog_v0.2.md
+│   │   └── PrototypeTestLog_v0.3.md
 │   └── archive/               # 历史文档
 ├── scripts/                   # Godot 脚本
 ├── assets/
@@ -36,7 +39,7 @@ FoxKnight/
 └── project.godot              # Godot 项目入口
 ```
 
-`docs/GDD.docx` 若存在，只是 `docs/GDD.md` 的阅读和展示副本，不是设计来源。
+`docs/GDD.docx` 当前仍为 v0.1 历史阅读副本，未同步 v0.3，请勿作为当前需求。当前设计请阅读 `docs/GDD.md`。
 
 ## 阅读与协作入口
 
@@ -46,8 +49,10 @@ FoxKnight/
 2. `docs/OnePaper.md`
 3. `docs/GDD.md`
 4. `docs/DecisionLog.md`
-5. `docs/playtest/PrototypeTestLog_v0.2.md`（记录当前 v0.2 逐次验收与试玩证据）
+5. `docs/playtest/PrototypeTestLog_v0.3.md`（当前验收与试玩证据）
 6. `docs/TDD.md`（进入实现、调试或技术审查时阅读）
+
+编排关卡请阅读 `docs/guides/v03_level_editing.md`，在 Godot 编辑器中使用原生瓦片绘制和雕塑实例参数。历史场景不作为默认运行入口。
 
 使用 agent 工作时，先阅读根目录 `AGENTS.md`，再按任务类型进入相应角色文件：
 
