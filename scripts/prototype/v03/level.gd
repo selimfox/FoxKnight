@@ -1,6 +1,10 @@
 class_name V03Level
 extends Node2D
 
+const FoxAura = preload("res://scripts/actors/v03/fox_aura.gd")
+const ImpactVfx = preload("res://scripts/combat/v03/impact_vfx.gd")
+const ImpactMark = preload("res://scripts/combat/v03/impact_mark.gd")
+
 enum Phase { OBSERVING, AIMING, EXECUTING, CHOOSING, WAITING, RESOLVED }
 
 @export var lock_config: ChainLockConfig
@@ -24,7 +28,6 @@ var _slash_origin := Vector2.ZERO
 var _slash_direction := Vector2.RIGHT
 var _slash_distance := 0.0
 var _slash_arc := false
-var _reflect_ids: Dictionary = {}
 var _marks: Array[Dictionary] = []
 var _scale_restore_start := 0
 var _scale_restore_from := 1.0
@@ -37,6 +40,9 @@ var _victory_pending := false
 @onready var wall_layer: TileMapLayer = $Terrain/Walls
 @onready var status: Label = $HUD/Status
 @onready var result_label: Label = $HUD/Result
+@onready var choice_shade: ColorRect = $ChoiceShade
+@onready var choice_prompt: Label = $HUD/ChoicePrompt
+var _aura: Node2D
 
 func _enter_tree() -> void:
 	_ensure_action(&"heaven_chain", KEY_E)
@@ -60,6 +66,8 @@ func _ready() -> void:
 	for statue in statues():
 		_wire_statue(statue)
 	fox.set_terrain_grid(self, 14.0)
+	_aura = FoxAura.new()
+	fox.add_child(_aura)
 	_startup_complete = true
 	_update_hud()
 
@@ -81,6 +89,7 @@ func _process(_delta: float) -> void:
 			Engine.time_scale = 1.0
 			_scale_restore_start = 0
 	_update_hud()
+	_update_presentation()
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
@@ -88,7 +97,7 @@ func _physics_process(delta: float) -> void:
 		return
 	lock_cooldown_remaining = maxf(0.0, lock_cooldown_remaining - delta)
 	if phase == Phase.EXECUTING:
-		_reflect_in_slash()
+		_cut_bullets_in_slash()
 		_slash_end -= delta
 		if _slash_end <= 0.0:
 			_end_slash()
@@ -154,7 +163,6 @@ func _start_slash(arc: bool, direction: Vector2) -> void:
 	slash_count += 1
 	direct_kills_this_slash = 0
 	_slash_end = slash_duration
-	_reflect_ids.clear()
 	if arc:
 		fox.play_arc_attack_pose(slash_duration)
 	else:
@@ -165,7 +173,7 @@ func _start_slash(arc: bool, direction: Vector2) -> void:
 	for statue in statues():
 		if statue.alive and _point_in_slash(statue.global_position, 18.0):
 			_kill_statue(statue, true, _direct_corpse_direction(statue.global_position))
-	_reflect_in_slash()
+	_cut_bullets_in_slash()
 	_update_hud()
 
 func _end_slash() -> void:
@@ -183,6 +191,7 @@ func _end_slash() -> void:
 		_update_aim(get_global_mouse_position())
 	else:
 		_enter_waiting()
+	_update_presentation()
 
 func _finish_choice(accept: bool) -> void:
 	if phase != Phase.CHOOSING:
@@ -237,6 +246,7 @@ func _resolve(victory: bool) -> void:
 		node.set_physics_process(false)
 	result_label.text = "胜利 · R 重试" if victory else "失败 · R 重试"
 	_update_hud()
+	_update_presentation()
 	set_process(false)
 
 func fox_hit() -> void:
@@ -263,6 +273,7 @@ func _wire_statue(statue: V03Statue) -> void:
 		statue.fired.connect(_on_statue_fired)
 
 func _on_statue_fired(origin: Vector2, direction: Vector2, speed: float, acceleration: float) -> void:
+	_flash(origin, Color(1.0, 0.35, 0.1))
 	_spawn_projectile(V03Projectile.Kind.ENEMY, origin, direction, speed, acceleration, 7.0, 5.0)
 
 func _spawn_projectile(kind: V03Projectile.Kind, origin: Vector2, direction: Vector2, speed: float, acceleration: float, radius: float, lifetime: float, range_limit: float = INF) -> V03Projectile:
@@ -287,12 +298,12 @@ func advance_projectile(bullet: V03Projectile, origin: Vector2, target: Vector2)
 		var point := origin.lerp(target, float(step) / float(steps))
 		if is_wall(point, bullet.radius):
 			if bullet.kind == V03Projectile.Kind.CORPSE:
-				_add_mark(point)
+				_add_mark(point, true)
 			bullet.consume()
 			return
 		if bullet.kind == V03Projectile.Kind.ENEMY:
 			if phase == Phase.EXECUTING and _point_in_slash(point, bullet.radius):
-				_reflect(bullet, point)
+				_cut_enemy_bullet(bullet, point)
 				return
 			if point.distance_to(fox.global_position) <= bullet.radius + 12.0:
 				bullet.consume()
@@ -307,25 +318,23 @@ func advance_projectile(bullet: V03Projectile, origin: Vector2, target: Vector2)
 				elif bullet.kind == V03Projectile.Kind.CORPSE:
 					# Create successor before consuming predecessor; outcome check sees the full batch.
 					_kill_statue(statue, false, bullet.direction)
-				else:
-					_kill_statue(statue, false, bullet.direction)
+				_flash(point, corpse_config.mark_color)
 				bullet.consume()
 				call_deferred("_check_outcome")
 				return
 	bullet.global_position = target
 
-func _reflect_in_slash() -> void:
+func _cut_bullets_in_slash() -> void:
 	for node in effects.get_children():
 		if node is V03Projectile:
 			var bullet := node as V03Projectile
 			if bullet.active and bullet.kind == V03Projectile.Kind.ENEMY and _point_in_slash(bullet.global_position, bullet.radius):
-				_reflect(bullet, bullet.global_position)
+				_cut_enemy_bullet(bullet, bullet.global_position)
 
-func _reflect(bullet: V03Projectile, at: Vector2) -> void:
+func _cut_enemy_bullet(bullet: V03Projectile, at: Vector2) -> void:
 	if not bullet.active or bullet.kind != V03Projectile.Kind.ENEMY:
 		return
-	var reverse := -bullet.direction if bullet.direction != Vector2.ZERO else -bullet.last_direction
-	_spawn_projectile(V03Projectile.Kind.FRIENDLY, at, reverse, bullet.speed, 0.0, bullet.radius, bullet.lifetime)
+	_flash(at, Color(1.0, 0.88, 0.52))
 	bullet.consume()
 
 func _kill_statue(statue: V03Statue, direct: bool, direction: Vector2) -> void:
@@ -345,12 +354,15 @@ func _direct_corpse_direction(at: Vector2) -> Vector2:
 	return radial if radial != Vector2.ZERO else last_direction
 
 func _point_in_slash(at: Vector2, radius: float = 0.0) -> bool:
-	if _slash_arc:
-		return at.distance_to(_slash_origin) <= arc_radius + radius
-	var relative := at - _slash_origin
-	var along := relative.dot(_slash_direction)
-	var across := absf(relative.cross(_slash_direction))
-	return along >= -radius and along <= _slash_distance + radius and across <= straight_width * 0.5 + radius
+	return _point_in_area(at, _slash_origin, _slash_direction, _slash_distance, _slash_arc, radius)
+
+func _point_in_area(at: Vector2, origin: Vector2, direction: Vector2, distance: float, arc: bool, radius: float) -> bool:
+	if arc:
+		return at.distance_to(origin) <= arc_radius + radius
+	var relative := at - origin
+	var along := relative.dot(direction)
+	var across := absf(relative.cross(direction))
+	return along >= -radius and along <= distance + radius and across <= straight_width * 0.5 + radius
 
 func allowed_dash_distance(origin: Vector2, direction: Vector2, maximum: float) -> float:
 	if direction == Vector2.ZERO:
@@ -393,15 +405,31 @@ func alive_count() -> int:
 func friendly_attack_count() -> int:
 	var count := 0
 	for node in effects.get_children():
-		if node is V03Projectile and node.active and node.kind in [V03Projectile.Kind.FRIENDLY, V03Projectile.Kind.CORPSE]:
+		if node is V03Projectile and node.active and node.kind == V03Projectile.Kind.CORPSE:
 			count += 1
 	return count
 
-func _add_mark(at: Vector2) -> void:
-	_marks.append({"position": at, "end": Time.get_ticks_usec() + int(corpse_config.mark_lifetime * 1000000.0)})
+func _add_mark(at: Vector2, wall: bool = false) -> void:
+	var mark := ImpactMark.new()
+	mark.tint = corpse_config.mark_color
+	mark.lifetime = corpse_config.mark_lifetime
+	mark.on_wall = wall
+	effects.add_child(mark)
+	mark.global_position = at
+	_marks.append({"position": at, "end": Time.get_ticks_usec() + int(corpse_config.mark_lifetime * 1000000.0), "node": mark})
 	while _marks.size() > corpse_config.maximum_marks:
-		_marks.pop_front()
+		var oldest: Dictionary = _marks.pop_front()
+		if is_instance_valid(oldest.node):
+			oldest.node.queue_free()
+	_flash(at, corpse_config.mark_color, true)
 	queue_redraw()
+
+func _flash(at: Vector2, color: Color, splatter: bool = false) -> void:
+	var flash := ImpactVfx.new()
+	flash.tint = color
+	flash.splatter = splatter
+	effects.add_child(flash)
+	flash.global_position = at
 
 func _draw() -> void:
 	var now := Time.get_ticks_usec()
@@ -409,10 +437,6 @@ func _draw() -> void:
 		var mark := _marks[index]
 		if now >= mark.end:
 			_marks.remove_at(index)
-		else:
-			var center: Vector2 = to_local(mark.position)
-			draw_line(center + Vector2(-8, -5), center + Vector2(9, 4), corpse_config.mark_color, 2.0)
-			draw_line(center + Vector2(-4, 6), center + Vector2(3, -8), corpse_config.mark_color, 2.0)
 	if phase == Phase.EXECUTING:
 		if _slash_arc:
 			draw_arc(to_local(_slash_origin), arc_radius, 0.0, TAU, 48, Color(1.0, 0.64, 0.22, 0.85), 12.0)
@@ -424,9 +448,30 @@ func _update_hud() -> void:
 		status.text = "目标 %d · %s" % [alive_count(), result]
 	elif phase == Phase.CHOOSING:
 		var remaining := maxf(0.0, float(choice_end_usec - Time.get_ticks_usec()) / 1000000.0)
-		status.text = "续斩 %s · %.1f 秒 · 新点击确认" % ["圆" if _slash_arc else "直", remaining]
+		status.text = "本刀直杀 %d / %d · 续斩资格已获得" % [direct_kills_this_slash, maxi(1, chain_config.direct_kills_required)]
+		choice_prompt.text = "异刀续斩：%s斩\n%.1f 秒 · 新点击确认" % ["圆" if _slash_arc else "直", remaining]
+	elif phase == Phase.AIMING:
+		status.text = "预览直杀 %d / %d · 松开执行%s斩" % [_preview_direct_hits(), maxi(1, chain_config.direct_kills_required), "圆" if _slash_arc else "直"]
+	elif phase == Phase.EXECUTING:
+		status.text = "本刀直杀 %d / %d · 第 %d 刀" % [direct_kills_this_slash, maxi(1, chain_config.direct_kills_required), slash_count]
 	else:
 		status.text = "目标 %d · 第 %d 刀 · 锁 %.1f · %s" % [alive_count(), slash_count + 1, lock_cooldown_remaining, Phase.keys()[phase]]
+
+func _preview_direct_hits() -> int:
+	var total := 0
+	var origin := fox.global_position
+	for statue in statues():
+		if not statue.alive:
+			continue
+		if _point_in_area(statue.global_position, origin, _slash_direction, _slash_distance, _slash_arc, 18.0):
+			total += 1
+	return total
+
+func _update_presentation() -> void:
+	choice_shade.visible = phase == Phase.CHOOSING
+	choice_prompt.visible = phase == Phase.CHOOSING
+	if is_instance_valid(_aura):
+		_aura.visible = phase == Phase.CHOOSING
 
 func _ensure_action(action: StringName, key: Key) -> void:
 	if InputMap.has_action(action):

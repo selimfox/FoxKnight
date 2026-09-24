@@ -1,7 +1,9 @@
 class_name V03Projectile
 extends Node2D
 
-enum Kind { ENEMY, FRIENDLY, LOCK, CORPSE }
+enum Kind { ENEMY, LOCK, CORPSE }
+
+const STATUE_SCENE = preload("res://scenes/actors/v03/statue.tscn")
 
 var kind := Kind.ENEMY
 var direction := Vector2.RIGHT
@@ -13,6 +15,17 @@ var travel_remaining := INF
 var last_direction := Vector2.RIGHT
 var owner_level: Node
 var active := true
+var trail: Array[Vector2] = []
+var visual_age := 0.0
+var _corpse_sculpture: Node2D
+
+func _ready() -> void:
+	if kind == Kind.CORPSE:
+		var statue := STATUE_SCENE.instantiate()
+		_corpse_sculpture = statue.get_node("Sculpture").duplicate() as Node2D
+		statue.free()
+		_corpse_sculpture.scale = Vector2.ONE * 0.6
+		add_child(_corpse_sculpture)
 
 func _physics_process(delta: float) -> void:
 	if not active or owner_level == null:
@@ -22,6 +35,11 @@ func _physics_process(delta: float) -> void:
 		consume()
 		return
 	var from := global_position
+	visual_age += delta
+	if kind == Kind.ENEMY and speed > 0.0:
+		trail.push_front(from)
+		if trail.size() > 7:
+			trail.pop_back()
 	var step := minf(speed * delta, travel_remaining)
 	var target := from + direction * step
 	travel_remaining -= step
@@ -54,13 +72,22 @@ func _draw() -> void:
 			draw_polyline(PackedVector2Array([Vector2(x - 3, 0), Vector2(x, -4), Vector2(x + 3, 0), Vector2(x, 4), Vector2(x - 3, 0)]), Color(0.45, 0.96, 1.0), 1.8)
 		draw_colored_polygon(PackedVector2Array([Vector2(7, -7), Vector2(19, 0), Vector2(7, 7)]), color)
 		draw_set_transform(Vector2.ZERO)
-	elif kind == Kind.FRIENDLY:
-		draw_colored_polygon(PackedVector2Array([Vector2(0, -radius - 3), Vector2(radius + 3, 0), Vector2(0, radius + 3), Vector2(-radius - 3, 0)]), color)
-		draw_arc(Vector2.ZERO, radius + 5.0, 0.0, TAU, 16, Color(0.7, 1.0, 1.0, 0.7), 1.5)
 	elif kind == Kind.CORPSE:
-		draw_circle(Vector2.ZERO, radius, color)
-		draw_line(Vector2(-radius, -4), Vector2(radius, 5), Color(0.30, 0.29, 0.27), 2.0)
-		draw_line(Vector2(-2, radius), Vector2(4, -radius), Color(0.30, 0.29, 0.27), 2.0)
+		pass # The duplicated Sculpture scene is drawn by its Polygon2D children.
 	else:
+		_draw_trail(Color(1.0, 0.28, 0.09, 0.72))
+		draw_circle(Vector2.ZERO, radius + 7.0, Color(1.0, 0.16, 0.04, 0.22))
 		draw_circle(Vector2.ZERO, radius, color)
 		draw_circle(Vector2(-2, -2), radius * 0.35, Color(1.0, 0.75, 0.55))
+
+func _draw_trail(tint: Color) -> void:
+	for index in range(trail.size() - 1, -1, -1):
+		var local := to_local(trail[index])
+		var fade := 1.0 - float(index + 1) / float(trail.size() + 1)
+		var bead := tint
+		bead.a *= fade * 0.6
+		draw_circle(local, maxf(1.0, radius * fade * 0.75), bead)
+	if trail.size() > 0:
+		var line_color := tint
+		line_color.a *= 0.62
+		draw_line(to_local(trail[trail.size() - 1]), Vector2.ZERO, line_color, 3.0)

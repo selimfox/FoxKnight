@@ -53,6 +53,7 @@ func kill() -> bool:
 		return false
 	alive = false
 	$CollisionShape2D.set_deferred("disabled", true)
+	$Sculpture.visible = false
 	queue_redraw()
 	died.emit(self)
 	return true
@@ -60,9 +61,6 @@ func kill() -> bool:
 func _draw() -> void:
 	if not alive:
 		return
-	draw_circle(Vector2.ZERO, 20.0, Color(0.28, 0.29, 0.35))
-	draw_circle(Vector2.ZERO, 13.0, Color(0.64, 0.60, 0.51))
-	draw_line(Vector2(-8, -7), Vector2(9, 7), Color(0.18, 0.17, 0.20), 3.0)
 	if bound_remaining > 0.0:
 		draw_arc(Vector2.ZERO, 27.0, 0.0, TAU, 30, Color(0.35, 0.90, 1.0), 4.0)
 		for index in range(12):

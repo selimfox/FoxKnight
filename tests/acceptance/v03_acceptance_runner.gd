@@ -83,7 +83,7 @@ func _run() -> void:
 	first.shot_clock = 0.0
 	var count_before := level.effects.get_child_count()
 	first._physics_process(0.016)
-	_check(level.effects.get_child_count() == count_before + 1, "AC-03 aimed statue fires configured bullet")
+	_check(level.effects.get_child_count() == count_before + 2, "AC-03 aimed statue fires configured bullet and launch flash")
 	var enemy_bullet := level.effects.get_child(level.effects.get_child_count() - 1) as V03Projectile
 	var fixed_direction := enemy_bullet.direction
 	level.fox.global_position += Vector2(0, 100)
@@ -107,14 +107,15 @@ func _run() -> void:
 	level._slash_distance = 100.0
 	level._slash_arc = false
 	level.phase = V03Level.Phase.EXECUTING
-	var reflect := level._spawn_projectile(V03Projectile.Kind.ENEMY, level.fox.global_position + Vector2(50, 0), Vector2.LEFT, 500, 100, 5, 4)
-	level._reflect_in_slash()
-	_check(not reflect.active, "AC-04 reflected enemy bullet immediately invalid")
-	var friendly: V03Projectile
-	for node in level.effects.get_children():
-		if node is V03Projectile and node.active and node.kind == V03Projectile.Kind.FRIENDLY:
-			friendly = node
-	_check(friendly != null and friendly.direction == Vector2.RIGHT and friendly.speed == 500.0 and friendly.acceleration == 0.0, "AC-04 friendly bullet reverses and removes acceleration")
+	var cut := level._spawn_projectile(V03Projectile.Kind.ENEMY, level.fox.global_position + Vector2(50, 0), Vector2.LEFT, 500, 100, 5, 4)
+	var attack_count := level.friendly_attack_count()
+	level._cut_bullets_in_slash()
+	_check(not cut.active and level.friendly_attack_count() == attack_count, "AC-04 straight slash consumes bullet without derived attack")
+	_check(level.direct_kills_this_slash == 0, "AC-05 cut bullet grants no direct-kill credit")
+	level._slash_arc = true
+	cut = level._spawn_projectile(V03Projectile.Kind.ENEMY, level.fox.global_position + Vector2(30, 0), Vector2.LEFT, 500, 100, 5, 4)
+	level._cut_bullets_in_slash()
+	_check(not cut.active and level.friendly_attack_count() == attack_count, "AC-04 arc slash consumes bullet without derived attack")
 	level.phase = V03Level.Phase.OBSERVING
 	level.fox_hit()
 	_check(level.result == "failure", "AC-09 normal phase vulnerable")
@@ -135,6 +136,9 @@ func _run() -> void:
 	_check(level.phase == V03Level.Phase.EXECUTING, "AC-09 execution immunity")
 	level._end_slash()
 	_check(level.phase == V03Level.Phase.CHOOSING and level._slash_arc, "AC-05 follow-up forces alternating arc form")
+	_check(level.choice_shade.visible and level.choice_prompt.visible and level._aura.visible, "readability choice darkens board and highlights fox with forced form prompt")
+	level._update_hud()
+	_check(level.choice_prompt.text.contains("圆斩") and level.choice_prompt.text.contains("秒"), "readability forced alternate slash and real countdown are prominent")
 	_check(Engine.time_scale < 1.0 and level.choice_end_usec > Time.get_ticks_usec(), "AC-06 choice uses slow scale and real deadline")
 	level.fox_hit()
 	_check(level.phase == V03Level.Phase.CHOOSING and not level.fox.is_input_enabled(), "AC-09 choice immune and movement disabled")
@@ -153,12 +157,9 @@ func _run() -> void:
 	statues[1].kill()
 	level.phase = V03Level.Phase.WAITING
 	var last_target := statues[2]
-	var late_friendly := level._spawn_projectile(V03Projectile.Kind.FRIENDLY, last_target.global_position - Vector2(70, 0), Vector2.RIGHT, 400, 0, 6, 2)
+	var late_enemy := level._spawn_projectile(V03Projectile.Kind.ENEMY, last_target.global_position - Vector2(70, 0), Vector2.RIGHT, 400, 0, 6, 2)
 	level._check_outcome()
-	_check(level.phase == V03Level.Phase.WAITING, "AC-08 late friendly bullet delays failure")
-	level.advance_projectile(late_friendly, late_friendly.global_position, last_target.global_position + Vector2(20, 0))
-	await process_frame
-	_check(level.result == "victory" and not last_target.alive, "AC-08 late friendly bullet can finish all targets")
+	_check(level.result == "failure" and last_target.alive and late_enemy.active, "AC-08 enemy bullet cannot delay failure or kill statue")
 	_remove(level)
 
 	level = _new_level()
@@ -170,6 +171,7 @@ func _run() -> void:
 	last_target = statues[2]
 	var late_corpse := level._spawn_projectile(V03Projectile.Kind.CORPSE, last_target.global_position - Vector2(70, 0), Vector2.RIGHT, 400, 0, 12, 2)
 	level._check_outcome()
+	_check(level.phase == V03Level.Phase.WAITING, "AC-08 late corpse delays failure")
 	level.advance_projectile(late_corpse, late_corpse.global_position, last_target.global_position + Vector2(20, 0))
 	await process_frame
 	_check(level.result == "victory" and not last_target.alive and level.direct_kills_this_slash == 0, "AC-08 late corpse can finish all targets without direct credit")
@@ -199,16 +201,18 @@ func _run() -> void:
 	second = statues[1]
 	level.phase = V03Level.Phase.WAITING
 	var corpse := level._spawn_projectile(V03Projectile.Kind.CORPSE, first.global_position - Vector2(60, 0), Vector2.RIGHT, 400, 0, 12, 2)
+	var sculpture := corpse.get_node_or_null("Sculpture") as Node2D
+	_check(sculpture != null and sculpture.get_child_count() >= 8 and sculpture.get_node_or_null("Head") is Polygon2D, "readability flying corpse reuses humanoid Sculpture silhouette")
 	level.advance_projectile(corpse, corpse.global_position, first.global_position + Vector2(20, 0))
 	_check(not first.alive and not corpse.active and level.friendly_attack_count() >= 1, "AC-07 corpse transfers atomically to successor")
 	_check(level.direct_kills_this_slash == 0, "AC-05 indirect death does not count for chain")
 	level._check_outcome()
-	_check(level.phase == V03Level.Phase.WAITING, "AC-08 pending friendly attack delays failure")
+	_check(level.phase == V03Level.Phase.WAITING, "AC-08 pending corpse delays failure")
 	for node in level.effects.get_children():
 		if node is V03Projectile:
 			node.consume()
 	level._check_outcome()
-	_check(level.result == "failure", "AC-08 no friendly attack and survivors means failure")
+	_check(level.result == "failure", "AC-08 no corpse and survivors means failure")
 	_remove(level)
 
 	level = _new_level()
@@ -240,11 +244,14 @@ func _run() -> void:
 	fast = level._spawn_projectile(V03Projectile.Kind.ENEMY, Vector2(420, 272), Vector2.LEFT, 2000, 0, 5, 2)
 	var count_friendly := level.friendly_attack_count()
 	level.advance_projectile(fast, fast.global_position, Vector2(200, 272))
-	_check(not fast.active and level.friendly_attack_count() == count_friendly + 1, "AC-04 high-speed slash crossing reflects once")
+	_check(not fast.active and level.friendly_attack_count() == count_friendly, "AC-04 high-speed slash crossing consumes without spawning attack")
 	level.phase = V03Level.Phase.WAITING
 	var corpse_wall := level._spawn_projectile(V03Projectile.Kind.CORPSE, Vector2(110, 272), Vector2.LEFT, 600, 0, 10, 2)
 	level.advance_projectile(corpse_wall, corpse_wall.global_position, Vector2(10, 272))
 	_check(not corpse_wall.active and level._marks.size() > 0, "AC-07 corpse stops at wall and leaves debris")
+	var wall_mark: Node2D = level._marks[level._marks.size() - 1].node
+	var mark_tint: Color = wall_mark.get("tint")
+	_check(wall_mark.get("on_wall") and mark_tint == level.corpse_config.mark_color and mark_tint.r > mark_tint.g, "readability wall impact renders configured red splatter")
 	_remove(level)
 
 	level = _new_level()
@@ -258,9 +265,14 @@ func _run() -> void:
 	third.global_position = Vector2(680, 272)
 	level.chain_config.direct_kills_required = 1
 	level.phase = V03Level.Phase.AIMING
+	level._update_aim(first.global_position)
+	var preview_count := level._preview_direct_hits()
+	level._update_hud()
+	_check(preview_count >= 1 and level.status.text.contains("预览直杀") and level.status.text.contains("/ 1"), "readability aim preview reports direct kills against N")
 	level._start_slash(false, Vector2.RIGHT)
 	level._end_slash()
 	_check(level.phase == V03Level.Phase.CHOOSING and first.alive == false and second.alive, "AC-05 first direct kill opens one choice")
+	_check(level.direct_kills_this_slash == 1 and level.status.text.contains("本刀直杀"), "readability execution reports actual direct kill credit")
 	level._finish_choice(true)
 	_check(level.slash_count == 2 and level.phase == V03Level.Phase.EXECUTING and second.alive == false, "AC-05 second opposite-form slash directly kills")
 	_check(Engine.time_scale < 1.0 and level._scale_restore_start > 0, "AC-06 accepted chain retains gradual scale recovery")
@@ -306,6 +318,7 @@ func _run() -> void:
 	level = _new_level()
 	await process_frame
 	var key := InputEventKey.new()
+	level.chain_config.direct_kills_required = 1 # Isolate input flow from authored scene threshold.
 	key.physical_keycode = KEY_E
 	key.pressed = true
 	var effects_before := level.effects.get_child_count()
