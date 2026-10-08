@@ -1,0 +1,328 @@
+{
+  "schema": "foxknight.pixel_fx.v1",
+  "native_frame": [
+    16,
+    16
+  ],
+  "native_to_world": 2,
+  "palette": {
+    "ice": "#62cceb",
+    "iceLight": "#c5f5fb",
+    "iceDeep": "#3677a2",
+    "amber": "#ee9b3e",
+    "amberLight": "#ffe3a1",
+    "white": "#fff4d3",
+    "steel": "#8c9aaa",
+    "smoke": "#536070"
+  },
+  "frames": [
+    {
+      "name": "hit",
+      "frame": 0,
+      "rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 17
+    },
+    {
+      "name": "hit",
+      "frame": 1,
+      "rect": [
+        16,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 17
+    },
+    {
+      "name": "hit",
+      "frame": 2,
+      "rect": [
+        32,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 17
+    },
+    {
+      "name": "hit",
+      "frame": 3,
+      "rect": [
+        48,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 17
+    },
+    {
+      "name": "hit",
+      "frame": 4,
+      "rect": [
+        64,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 17
+    },
+    {
+      "name": "hit",
+      "frame": 5,
+      "rect": [
+        80,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 17
+    },
+    {
+      "name": "straight",
+      "frame": 0,
+      "rect": [
+        96,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "straight",
+      "frame": 1,
+      "rect": [
+        112,
+        0,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "straight",
+      "frame": 2,
+      "rect": [
+        0,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "straight",
+      "frame": 3,
+      "rect": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "arc",
+      "frame": 0,
+      "rect": [
+        32,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "arc",
+      "frame": 1,
+      "rect": [
+        48,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "arc",
+      "frame": 2,
+      "rect": [
+        64,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "arc",
+      "frame": 3,
+      "rect": [
+        80,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 55
+    },
+    {
+      "name": "switch_warm",
+      "frame": 0,
+      "rect": [
+        96,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "switch_warm",
+      "frame": 1,
+      "rect": [
+        112,
+        16,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "switch_warm",
+      "frame": 2,
+      "rect": [
+        0,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "switch_warm",
+      "frame": 3,
+      "rect": [
+        16,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "switch_cool",
+      "frame": 0,
+      "rect": [
+        32,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "switch_cool",
+      "frame": 1,
+      "rect": [
+        48,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "switch_cool",
+      "frame": 2,
+      "rect": [
+        64,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "switch_cool",
+      "frame": 3,
+      "rect": [
+        80,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "death",
+      "frame": 0,
+      "rect": [
+        96,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "death",
+      "frame": 1,
+      "rect": [
+        112,
+        32,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "death",
+      "frame": 2,
+      "rect": [
+        0,
+        48,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "death",
+      "frame": 3,
+      "rect": [
+        16,
+        48,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "death",
+      "frame": 4,
+      "rect": [
+        32,
+        48,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    },
+    {
+      "name": "death",
+      "frame": 5,
+      "rect": [
+        48,
+        48,
+        16,
+        16
+      ],
+      "duration_ms": 45
+    }
+  ]
+}

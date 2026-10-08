@@ -1,0 +1,88 @@
+{
+  "version": "1.0",
+  "pixel_scale": 2,
+  "filter": "nearest",
+  "alpha": "binary_0_or_255",
+  "assets": {
+    "foxknight_wordmark": {
+      "native_size": [
+        184,
+        40
+      ],
+      "export_size": [
+        368,
+        80
+      ],
+      "viewport_position_960x540": [
+        296,
+        67
+      ]
+    },
+    "victory_lettering": {
+      "native_size": [
+        88,
+        38
+      ],
+      "export_size": [
+        176,
+        76
+      ],
+      "viewport_position_960x540": [
+        187,
+        392
+      ]
+    },
+    "failure_lettering": {
+      "native_size": [
+        88,
+        38
+      ],
+      "export_size": [
+        176,
+        76
+      ],
+      "viewport_position_960x540": [
+        187,
+        392
+      ]
+    },
+    "button_focus_corner": {
+      "native_frame": [
+        16,
+        16
+      ],
+      "export_frame": [
+        32,
+        32
+      ],
+      "frames": 4,
+      "layout": "horizontal",
+      "loop_ms": 640
+    },
+    "menu_open_glint": {
+      "native_frame": [
+        128,
+        16
+      ],
+      "export_frame": [
+        256,
+        32
+      ],
+      "frames": 6,
+      "layout": "vertical",
+      "frame_ms": 60,
+      "loop": false
+    },
+    "fox_crest": {
+      "native_size": [
+        64,
+        64
+      ],
+      "export_size": [
+        128,
+        128
+      ],
+      "anchor": "center"
+    }
+  }
+}

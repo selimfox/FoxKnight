@@ -1,0 +1,132 @@
+[
+  {
+    "retired": "assets/art/generated/sprites/death_burst.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\death_burst.png_backup_20261001_024544.png",
+    "sha256": "A33F9A69D165B4A83601F268879DA8DBB371BB18E539B71B4BED41930EAD97A1"
+  },
+  {
+    "retired": "assets/art/generated/sprites/death_burst.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\death_burst.png.import_backup_20261001_024544.import",
+    "sha256": "2F05DA9CCD4540EB579AC4556DE3AFBFF7C0270E8AC800F5E5888306EEF5CB43"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_death.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_death.png_backup_20261001_024544.png",
+    "sha256": "A0CB20C35D74329054429ACD3E97E3466C25D30552019626B52FD58E8582886E"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_death.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_death.png.import_backup_20261001_024544.import",
+    "sha256": "676FE6E3AE091CF6FD07794444E8B9927AFF47E528AE8D986B8320BB3049B0A7"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_hit.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_hit.png_backup_20261001_024544.png",
+    "sha256": "E123D13749D94F5F3BB8A87C95C63F79C622296043CD004FF66C5BAE74C89DBC"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_hit.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_hit.png.import_backup_20261001_024544.import",
+    "sha256": "F123457A99AD7A8331EC5A8E9A3F8E76BA023FA127FB71F4B8FCCA003FAC071B"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_idle.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_idle.png_backup_20261001_024544.png",
+    "sha256": "3931D8AF8E753F436851B5A669E86AD80D0012B98D66C4161E89A128DE2B6BBA"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_idle.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_idle.png.import_backup_20261001_024544.import",
+    "sha256": "5945000DD69991FED9EF09AEE6468DA95650D0BD2B6B30AE4EDE6BB6738F1DA1"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_target_icon.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_target_icon.png_backup_20261001_024544.png",
+    "sha256": "21657BEB1E910BDC9428B35686EDB2C1DEE7BD3DAEE091C5A6AD05CB9093AAEF"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_target_icon.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_target_icon.png.import_backup_20261001_024544.import",
+    "sha256": "11DD4264ECACF98BAC456EBC62E5D04FB5712EEDB2CED060F72AAAAB2C1F1985"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_walk.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_walk.png_backup_20261001_024544.png",
+    "sha256": "99EF79BD33C53009B445896394D26349E7CB2FD6F9776E3021703E6C12EA8D99"
+  },
+  {
+    "retired": "assets/art/generated/sprites/enemy_walk.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\enemy_walk.png.import_backup_20261001_024544.import",
+    "sha256": "1169C5BB10FD9694C005E15E985DE5D02BC9764F1DFF71ED50CB60C27DB7E9A2"
+  },
+  {
+    "retired": "assets/art/generated/sprites/fox_dash_slash.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\fox_dash_slash.png_backup_20261001_024544.png",
+    "sha256": "EF9B62598F29D2834EB65BC682A8E4A23B7B4E399CA61E92FA5E70A31900DF5D"
+  },
+  {
+    "retired": "assets/art/generated/sprites/fox_dash_slash.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\fox_dash_slash.png.import_backup_20261001_024544.import",
+    "sha256": "AC777AA8EDABB6776F758217DB69D8A1472F0AAF9473DA8138449F114C30CC83"
+  },
+  {
+    "retired": "assets/art/generated/sprites/fox_ready.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\fox_ready.png_backup_20261001_024544.png",
+    "sha256": "03B79E5C1524FD0820D790AF04AB8E930F074538926C5790714F7BCE212035F1"
+  },
+  {
+    "retired": "assets/art/generated/sprites/fox_ready.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\fox_ready.png.import_backup_20261001_024544.import",
+    "sha256": "58F9ABD91BC9FD5BB2716217D01CF584DABAE329FC22717011D1AD052E1AAA88"
+  },
+  {
+    "retired": "assets/art/generated/sprites/fox_walk.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\fox_walk.png_backup_20261001_024544.png",
+    "sha256": "023DC505B304717D94ACE9435310768F5007EAB8A5D0D69225B1BC36B627D810"
+  },
+  {
+    "retired": "assets/art/generated/sprites/fox_walk.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\fox_walk.png.import_backup_20261001_024544.import",
+    "sha256": "06407B9655938F886420FF90F3BB825DEA6EABEEA4F27CD0178B6CFCCF647FD1"
+  },
+  {
+    "retired": "assets/art/generated/sprites/hit_spark.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\hit_spark.png_backup_20261001_024544.png",
+    "sha256": "91610315A119E0CA6D9E6FC93CD66924D5159C335162E4CFFAF4426F77EE5B1F"
+  },
+  {
+    "retired": "assets/art/generated/sprites/hit_spark.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\hit_spark.png.import_backup_20261001_024544.import",
+    "sha256": "FE2FBD1419030ACDFD98CB0796F08929B8953001F2D714D66B1B2164A9AE11D5"
+  },
+  {
+    "retired": "assets/art/generated/sprites/one_cut_icon.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\one_cut_icon.png_backup_20261001_024544.png",
+    "sha256": "D7274212A092459EE176FE569759E8BA730AD997C29D6EB8E86C5B52D3CDA5DA"
+  },
+  {
+    "retired": "assets/art/generated/sprites/one_cut_icon.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\one_cut_icon.png.import_backup_20261001_024544.import",
+    "sha256": "2B5D3AC7C2F3D5183D51B91A3AC16012E8A3FE6D462A5C813CE8AE7A0F95D910"
+  },
+  {
+    "retired": "assets/art/generated/sprites/retry_icon.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\retry_icon.png_backup_20261001_024544.png",
+    "sha256": "8F1E5C6672B0415B50392AA9ACE7560032055B2F3FE466AAB0E14BE8F4A2EA89"
+  },
+  {
+    "retired": "assets/art/generated/sprites/retry_icon.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\retry_icon.png.import_backup_20261001_024544.import",
+    "sha256": "254A7F6B1ABA3BDE3DC6440B748D830CB1F3041C67ACABCDF75F9CF2721BE8D8"
+  },
+  {
+    "retired": "assets/art/generated/sprites/slash_trail.png",
+    "backup": "backups\\assets\\art\\generated\\sprites\\slash_trail.png_backup_20261001_024544.png",
+    "sha256": "2344717C1DBC03AF2CE9072895F7B14001CE42F9A85ABB96136B6A525C0A881B"
+  },
+  {
+    "retired": "assets/art/generated/sprites/slash_trail.png.import",
+    "backup": "backups\\assets\\art\\generated\\sprites\\slash_trail.png.import_backup_20261001_024544.import",
+    "sha256": "AC2204109A7DD26B2C1525244482D5E634FA612F18A2F5D615F4AA12D8C8DE2E"
+  }
+]

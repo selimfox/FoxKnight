@@ -5,11 +5,11 @@
 | 当前技术基线 | `docs/TDD_v0.1.md` |
 | 对应设计 | `docs/GDD.md` v0.1 阶段结算基线 |
 | 维护角色 | Coding Agent |
-| 更新日期 | 2026-08-26 |
+| 更新日期 | 2026-10-01 |
 
 ## 文档职责
 
-本文件是当前技术设计的固定入口。版本化技术内容放在对应的 `TDD_vX.Y.md` 中；当前 Coding Agent 应读取 `docs/TDD_v0.1.md`。
+本文件是当前技术设计的固定入口。版本化技术内容放在对应的 `TDD_vX.Y.md` 中；当前基线为 `docs/TDD_v0.1.md`。Coding Agent 按 `AGENTS.md` 的上下文规则确认版本和标题，再读取本次任务相关章节；全面审查或基线升级时扩大读取范围。
 
 TDD 说明如何实现已确认设计，不定义玩法，也不得覆盖 GDD。发生冲突时以 `docs/GDD.md` 为准，并把需要改变设计的问题交回 Architecture Agent。
 

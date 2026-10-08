@@ -1,11 +1,13 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/actors/player_controller.gd" id="1_player"]
-[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_idle.png" id="2_idle"]
-[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_walk.png" id="3_walk"]
-[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_ready.png" id="4_ready"]
-[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/fox_dash_slash.png" id="5_dash"]
 [ext_resource type="AudioStream" path="res://assets/audio/ui/slash_form_switch.ogg" id="6_form_switch"]
+[ext_resource type="Script" path="res://scripts/visual/character_animation.gd" id="7_animation"]
+[ext_resource type="Script" path="res://scripts/visual/dynamic_actor_shadow.gd" id="8_shadow"]
+[ext_resource type="Texture2D" path="res://assets/art/production/characters/e_20260930/fox_world2x.png" id="9_atlas"]
+[ext_resource type="Script" path="res://scripts/visual/fx_player.gd" id="10_fx_player"]
+[ext_resource type="Texture2D" path="res://assets/art/production/fx/fx_world2x.png" id="11_fx_atlas"]
+[ext_resource type="Script" path="res://scripts/visual/pixel_aim_overlay.gd" id="12_pixel_aim"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(30, 30)
@@ -14,21 +16,28 @@ size = Vector2(30, 30)
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_player")
-idle_texture = ExtResource("2_idle")
-walk_texture = ExtResource("3_walk")
-ready_texture = ExtResource("4_ready")
-dash_texture = ExtResource("5_dash")
+
+[node name="GroundShadow" type="Node2D" parent="." node_paths=PackedStringArray("frame_source")]
+script = ExtResource("8_shadow")
+frame_source = NodePath("../Visual/Sprite")
 
 [node name="Visual" type="Node2D" parent="."]
+z_index = 4
 
 [node name="Sprite" type="Sprite2D" parent="Visual"]
 texture_filter = 1
-texture = ExtResource("2_idle")
-scale = Vector2(0.29, 0.29)
+script = ExtResource("7_animation")
+atlas = ExtResource("9_atlas")
+frame_manifest = "res://assets/art/production/characters/e_20260930/frames.json"
 
 [node name="AimPreview" type="Node2D" parent="."]
 visible = false
 z_index = 10
+
+[node name="PixelRange" type="Node2D" parent="."]
+visible = false
+z_index = 11
+script = ExtResource("12_pixel_aim")
 
 [node name="Fill" type="Polygon2D" parent="AimPreview"]
 color = Color(1, 0.72, 0.2, 0.18)
@@ -38,29 +47,34 @@ polygon = PackedVector2Array(0, -40, 400, -40, 400, 40, 0, 40)
 points = PackedVector2Array(0, 0, 400, 0)
 width = 3.0
 default_color = Color(1, 0.82, 0.32, 0.9)
-antialiased = true
+antialiased = false
 
 [node name="Outline" type="Line2D" parent="AimPreview"]
 points = PackedVector2Array(0, -40, 400, -40, 400, 40, 0, 40, 0, -40)
 width = 2.0
 default_color = Color(1, 0.88, 0.44, 0.86)
-antialiased = true
+antialiased = false
 
 [node name="ArcBoundaryOutline" type="Line2D" parent="AimPreview"]
 width = 1.5
 default_color = Color(1, 0.78, 0.22, 0.18)
-antialiased = true
+antialiased = false
 
 [node name="FormSwitchFlash" type="Line2D" parent="AimPreview"]
 visible = false
 width = 4.0
 default_color = Color(1, 1, 1, 0.95)
-antialiased = true
+antialiased = false
 
 [node name="FormSwitchAudio" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_form_switch")
 volume_db = -16.0
 max_polyphony = 1
+
+[node name="FormSwitchFX" type="Node2D" parent="."]
+z_index = 12
+script = ExtResource("10_fx_player")
+atlas = ExtResource("11_fx_atlas")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("PlayerShape")

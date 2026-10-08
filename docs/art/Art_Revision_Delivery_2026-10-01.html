@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>狐狸骑士 · 美术迭代实机与动作</title>
+<style>
+body{margin:0;background:#263647;color:#f0e2bd;font:16px/1.8 'Microsoft YaHei',sans-serif}main{max-width:1120px;margin:auto;padding:28px 24px}h1{font-size:28px}h2{font-size:21px;margin-top:32px}a{color:#a4d7dd}nav{display:flex;gap:20px;flex-wrap:wrap}figure{margin:16px 0}figcaption,p{color:#c6cdd1}.viewport{overflow:auto;background:#1b2937;border:1px solid #637788;padding:8px}.viewport img{display:block;width:960px;max-width:none;height:auto;image-rendering:pixelated}details{padding:12px 16px;margin:12px 0;background:#34475a}summary{cursor:pointer}.cards{display:flex;flex-wrap:wrap;gap:12px}.card{background:#45586c;padding:8px;text-align:center;width:160px}.card img{width:160px;height:160px;image-rendering:pixelated;object-fit:contain}.portrait{image-rendering:pixelated;width:192px;height:192px}table{border-collapse:collapse}td,th{padding:8px 14px;border:1px solid #637788;text-align:left}.status{border-left:3px solid #b8b6a6;padding:10px 16px;background:#34475a}
+.card img{width:auto;height:auto;max-width:none;display:block;margin:auto}.card{width:170px}
+</style><main>
+<h1>狐狸骑士 · 本轮美术接入</h1>
+<p class="status">2026-10-01：本轮制作与正式场景替换完成。以下分别标注Godot实际运行截图与原生资源动画；<a href="Production_Run_2026-09-30.md">制作记录</a>、<a href="evidence/art_revision_20260930/Integration_Report.md">运行检查记录</a>。已认可E狐狸、R3轻量像素UI及双刀型方案，最终观感留待你的实机确认。</p>
+<nav><a href="#menu">菜单</a><a href="#levels">三关实机</a><a href="#aim">双刀型</a><a href="#motion">角色动作</a><a href="#water">水与光</a><a href="#windows">窗口对照</a></nav>
+<h2 id="menu">菜单与统一头像</h2>
+<figure class="viewport"><img src="evidence/art_revision_20260930/menu_960x540.png" alt="Godot菜单960×540"><figcaption>Godot实际菜单；正文保留可编辑中文，标题在原生网格排印。</figcaption></figure>
+<details><summary>头像原生4×检查</summary><img class="portrait" src="../../assets/art/production/characters/e_20260930/e_fox_portrait_r4_native_48.png" alt="E狐狸48×48原生头像4倍显示"><p>与游戏角色同身份的头像；此处为原生资源展示。</p></details>
+<h2 id="levels">三关实际游戏画面</h2>
+<figure class="viewport"><img src="evidence/art_revision_20260930/level_01_observe.png" alt="第一关观察"><figcaption>第一关：冷青湿庭，中央保持安静。</figcaption></figure>
+<details><summary>第二关：干燥灰紫庭院</summary><figure class="viewport"><img src="evidence/art_revision_20260930/level_02_observe.png" alt="第二关观察"></figure></details>
+<details><summary>第三关：外围残损庭院</summary><figure class="viewport"><img src="evidence/art_revision_20260930/level_03_observe.png" alt="第三关观察"></figure></details>
+<h2 id="aim">弧形斩与冲撞斩</h2>
+<figure class="viewport"><img src="evidence/art_revision_20260930/level_01_arc.png" alt="Godot弧形斩瞄准"><figcaption>脚底为圆心，单个真实半径边界；刀型签说明原地斩。</figcaption></figure>
+<figure class="viewport"><img src="evidence/art_revision_20260930/level_01_straight.png" alt="Godot冲撞斩瞄准"><figcaption>实际路径宽度与截断终点；弱暖圈提示回到近身刀型。</figcaption></figure>
+<details><summary>结算与幸存目标避让</summary><figure class="viewport"><img src="evidence/art_revision_20260930/level_01_result.png" alt="第一关结算避让"></figure><figure class="viewport"><img src="evidence/art_revision_20260930/result_dense_survivor_avoidance.png" alt="六目标分块结算避让"><figcaption>上下均有幸存者时，结果与操作分块寻找空位，实体及脚底保留8像素间距。</figcaption></figure></details>
+<h2 id="motion">角色原生逐帧动作</h2>
+<p>下列GIF播放交付图集的源帧；游戏内状态、位移、取消与真实命中另由运行检查验证。</p>
+<div class="cards">
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/fox_idle_front.gif" alt="狐狸待机">待机</div>
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/fox_walk_side.gif" alt="狐狸行走">侧向行走</div>
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/fox_ready_walk_side.gif" alt="狐狸移动瞄准">移动瞄准</div>
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/fox_cancel_front.gif" alt="狐狸取消">取消收剑</div>
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/fox_straight_side.gif" alt="狐狸冲撞斩">冲撞斩</div>
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/fox_arc_front.gif" alt="狐狸弧形斩">弧形斩</div>
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/soldier_walk_front.gif" alt="士兵追踪">士兵追踪</div>
+<div class="card"><img src="../../assets/art/production/characters/e_20260930/soldier_death_front.gif" alt="士兵死亡">士兵死亡</div>
+</div>
+<p><a href="../../assets/art/production/characters/e_20260930/frames.json">角色帧清单</a> · <a href="../../assets/art/production/ui/r3_20260930/component_review.png">UI原生组件接触表</a> · <a href="../../assets/art/production/fx/revision_20260930/contact_review.png">刀光原生接触表</a></p>
+<h2 id="water">浅水、倒影与连续动作</h2>
+<p>连续序列由Godot真实输入移动录得，30帧、每帧约0.08秒；展示进入浅水、四向移动转向和离水。这里播放的是采样画面，完整动作帧源另见上方。</p>
+<button id="waterPlay" type="button">播放进出水过程</button> <span id="waterFrame">第1 / 30帧</span>
+<figure class="viewport"><img id="waterMotion" src="evidence/art_revision_20260930/water_sequence_00.png" alt="真实连续进出水序列"></figure>
+<details><summary>水中转向与离水静态对照</summary>
+<figure class="viewport"><img src="evidence/art_revision_20260930/water_turn_00.png" alt="水中正向"></figure>
+<figure class="viewport"><img src="evidence/art_revision_20260930/water_turn_02.png" alt="水中背向"></figure>
+<figure class="viewport"><img src="evidence/art_revision_20260930/water_exit.png" alt="离开浅水"></figure></details>
+<h2 id="windows">窗口尺寸对照</h2>
+<p>本轮制作基准960×540，现有窗口拉伸配置沿用。1920×1080可整数显示；1280×720与超宽对照用于说明当前适配结果，不把任何视野或留边取舍隐含进资源替换。</p>
+<p><a href="evidence/art_revision_20260930/menu_1280x720.png">1280×720</a> · <a href="evidence/art_revision_20260930/menu_1920x1080.png">1920×1080</a> · <a href="evidence/art_revision_20260930/menu_1600x540.png">超宽窗口</a></p>
+<p>当前可见限制：近身角色重叠时，士兵可能遮住狐狸部分脸和握剑手。功能与素材检查通过不等于最终审美签收。</p>
+</main><script>
+const waterFrames=Array.from({length:30},(_,i)=>{let im=new Image();im.src='evidence/art_revision_20260930/water_sequence_'+String(i).padStart(2,'0')+'.png';return im});
+let waterIndex=0,waterTimer=null;
+document.getElementById('waterPlay').onclick=()=>{const button=document.getElementById('waterPlay');if(waterTimer){clearInterval(waterTimer);waterTimer=null;button.textContent='继续播放';return}button.textContent='暂停';waterTimer=setInterval(()=>{waterIndex=(waterIndex+1)%30;document.getElementById('waterMotion').src=waterFrames[waterIndex].src;document.getElementById('waterFrame').textContent='第'+(waterIndex+1)+' / 30帧';},80)};
+</script></html>

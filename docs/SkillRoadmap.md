@@ -4,11 +4,11 @@
 | --- | --- |
 | 状态 | 已建立待验证路线条目 |
 | 维护角色 | Learning Agent |
-| 服务对象 | Architecture Agent 与 Coding Agent |
+| 服务对象 | Architecture、Coding 与 Art Agent |
 
 ## 文档职责
 
-本文件用于记录项目所需能力、知识缺口、学习顺序和验证计划。它不定义当前游戏设计，也不作为生产实现需求；学习结论需要分别交给 Architecture Agent 或 Coding Agent 判断和采用。
+本文件用于记录项目所需能力、知识缺口、学习顺序和验证计划。它不定义当前游戏设计，也不作为生产实现需求；学习结论应交给对应的 Architecture、Coding 或 Art Agent 判断和采用。
 
 ## 当前路线
 

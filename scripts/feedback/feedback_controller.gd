@@ -1,6 +1,8 @@
 class_name FeedbackController
 extends Node
 
+const FX_ATLAS := preload("res://assets/art/production/fx/fx_world2x.png")
+
 @export_category("Prototype Feedback")
 @export_range(-30.0, 0.0, 1.0) var volume_db: float = -9.0
 @export_range(0.0, 0.5, 0.01) var hit_flash_duration: float = 0.10
@@ -26,12 +28,31 @@ func play_hit(enemy: EnemyController) -> void:
 	_hit_player.play()
 	if not is_instance_valid(enemy):
 		return
+	_spawn_world_fx("hit", enemy.global_position)
+	_spawn_death_after_hit(enemy.global_position)
 	var visual := enemy.get_node_or_null("Visual")
 	if visual == null:
 		return
 	visual.modulate = Color(1.0, 1.0, 0.65)
 	var tween := create_tween()
 	tween.tween_property(visual, "modulate", Color.WHITE, hit_flash_duration)
+
+
+func _spawn_death_after_hit(world_position: Vector2) -> void:
+	await get_tree().create_timer(0.10).timeout
+	_spawn_world_fx("death", world_position)
+
+
+func _spawn_world_fx(sequence: String, world_position: Vector2) -> void:
+	var world_parent := get_parent() as Node2D
+	if world_parent == null:
+		return
+	var fx := PixelFXPlayer.new()
+	fx.atlas = FX_ATLAS
+	fx.z_index = 24
+	world_parent.add_child(fx)
+	fx.global_position = world_position
+	fx.configure(sequence, [Vector2.ZERO], true)
 
 
 func play_result(victory: bool) -> void:
@@ -58,4 +79,3 @@ func _make_tone(frequency: float, seconds: float, amplitude: float, sweep: float
 	stream.stereo = false
 	stream.data = data
 	return stream
-

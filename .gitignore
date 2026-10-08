@@ -22,3 +22,9 @@
 *.key
 *.pfx
 *.p12
+
+# Generated local test output and Python caches
+/output/*
+!/output/.gitkeep
+__pycache__/
+*.pyc

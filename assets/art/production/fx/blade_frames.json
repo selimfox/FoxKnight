@@ -1,0 +1,110 @@
+{
+  "schema": "foxknight.blade_fx.v1",
+  "scale": 2,
+  "palette": {
+    "deep_cyan": "#287d9c",
+    "cyan": "#65cce6",
+    "ice": "#c7f5fa",
+    "white": "#fff8df",
+    "burnt": "#a85427",
+    "amber": "#ef9b3b",
+    "gold": "#ffd077",
+    "warm_white": "#fff1c5",
+    "impact": "#f7eccb",
+    "stone": "#78899a"
+  },
+  "effects": [
+    {
+      "name": "straight_blade",
+      "native_frame": [
+        16,
+        36
+      ],
+      "world_frame": [
+        32,
+        72
+      ],
+      "frames": 4,
+      "frame_ms": 55,
+      "anchor_native": [
+        8,
+        0
+      ],
+      "anchor_world": [
+        16,
+        0
+      ],
+      "source": "straight_blade_source.png",
+      "export": "straight_blade.png"
+    },
+    {
+      "name": "straight_tip",
+      "native_frame": [
+        16,
+        16
+      ],
+      "world_frame": [
+        32,
+        32
+      ],
+      "frames": 4,
+      "frame_ms": 55,
+      "anchor_native": [
+        8,
+        0
+      ],
+      "anchor_world": [
+        16,
+        0
+      ],
+      "source": "straight_tip_source.png",
+      "export": "straight_tip.png"
+    },
+    {
+      "name": "arc_blade",
+      "native_frame": [
+        96,
+        96
+      ],
+      "world_frame": [
+        192,
+        192
+      ],
+      "frames": 4,
+      "frame_ms": 55,
+      "anchor_native": [
+        48,
+        48
+      ],
+      "anchor_world": [
+        96,
+        96
+      ],
+      "source": "arc_blade_source.png",
+      "export": "arc_blade.png"
+    },
+    {
+      "name": "blade_hit",
+      "native_frame": [
+        24,
+        24
+      ],
+      "world_frame": [
+        48,
+        48
+      ],
+      "frames": 6,
+      "frame_ms": 35,
+      "anchor_native": [
+        12,
+        12
+      ],
+      "anchor_world": [
+        24,
+        24
+      ],
+      "source": "blade_hit_source.png",
+      "export": "blade_hit.png"
+    }
+  ]
+}

@@ -1,35 +1,44 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/prototype_hud.gd" id="1_hud"]
-[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/one_cut_icon.png" id="2_cut_icon"]
-[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/enemy_target_icon.png" id="3_target_icon"]
-[ext_resource type="Texture2D" path="res://assets/art/generated/sprites/retry_icon.png" id="4_retry_icon"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/icons_blade_target_retry.png" id="2_icons"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/hud_panel_9slice.png" id="3_hud_panel"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/hint_ribbon.png" id="4_hint"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/result_panel_9slice.png" id="5_result_panel"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/result_divider.png" id="6_divider"]
+[ext_resource type="Theme" path="res://scenes/ui/production_ui_theme.tres" id="7_ui_theme"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/victory_lettering.png" id="8_victory_title"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/failure_lettering.png" id="9_failure_title"]
+[ext_resource type="Script" path="res://scripts/ui/title_motion.gd" id="10_title_motion"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_counter.gd" id="11_pixel_counter"]
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/digits_0_to_9.png" id="12_digits"]
+[ext_resource type="Script" path="res://scripts/ui/pixel_form_glyph.gd" id="13_form_glyph"]
 
-[sub_resource type="StyleBoxFlat" id="TopBarStyle"]
-bg_color = Color(0.045, 0.035, 0.075, 0.92)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.36, 0.25, 0.43, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="AtlasTexture" id="BladeIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="StyleBoxFlat" id="ResultStyle"]
-bg_color = Color(0.035, 0.025, 0.055, 0.97)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.88, 0.54, 0.2, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.65)
-shadow_size = 12
+[sub_resource type="AtlasTexture" id="TargetIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="RetryIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="StyleBoxTexture" id="TopBarStyle"]
+texture = ExtResource("3_hud_panel")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxTexture" id="ResultStyle"]
+texture = ExtResource("5_result_panel")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -42,57 +51,171 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("7_ui_theme")
+texture_filter = 1
 
 [node name="TopBar" type="Panel" parent="Root"]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 18.0
-offset_right = 382.0
-offset_bottom = 68.0
+offset_right = 244.0
+offset_bottom = 64.0
 theme_override_styles/panel = SubResource("TopBarStyle")
+
+[node name="FormBadge" type="Panel" parent="Root"]
+layout_mode = 0
+visible = false
+offset_left = 260.0
+offset_top = 18.0
+offset_right = 480.0
+offset_bottom = 62.0
+theme_override_styles/panel = SubResource("TopBarStyle")
+
+[node name="FormGlyph" type="Control" parent="Root/FormBadge"]
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 40.0
+offset_bottom = 38.0
+mouse_filter = 2
+script = ExtResource("13_form_glyph")
+
+[node name="FormLabel" type="Label" parent="Root/FormBadge"]
+offset_left = 44.0
+offset_top = 8.0
+offset_right = 213.0
+offset_bottom = 36.0
+theme_override_colors/font_color = Color(0.94, 0.89, 0.74, 1)
+theme_override_font_sizes/font_size = 18
+text = "弧形斩 · 原地"
 
 [node name="AttackIcon" type="TextureRect" parent="Root/TopBar"]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 6.0
-offset_right = 48.0
-offset_bottom = 44.0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 39.0
+offset_bottom = 37.0
 texture_filter = 1
-texture = ExtResource("2_cut_icon")
+texture = SubResource("BladeIcon")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 0
 
 [node name="AttackCountLabel" type="Label" parent="Root/TopBar"]
+visible = false
 layout_mode = 0
-offset_left = 52.0
-offset_top = 10.0
-offset_right = 184.0
-offset_bottom = 40.0
+offset_left = 43.0
+offset_top = 7.0
+offset_right = 86.0
+offset_bottom = 38.0
 theme_override_colors/font_color = Color(1, 0.78, 0.28, 1)
 theme_override_font_sizes/font_size = 20
-text = "一刀  1 / 1"
+text = "1"
+
+[node name="AttackDigits" type="Control" parent="Root/TopBar"]
+offset_left = 46.0
+offset_top = 5.0
+offset_right = 90.0
+offset_bottom = 41.0
+script = ExtResource("11_pixel_counter")
+digits_atlas = ExtResource("12_digits")
+tint = Color(1, 1, 1, 1)
+value = 1
 
 [node name="EnemyIcon" type="TextureRect" parent="Root/TopBar"]
 layout_mode = 0
-offset_left = 195.0
-offset_top = 6.0
-offset_right = 233.0
-offset_bottom = 44.0
+offset_left = 111.0
+offset_top = 5.0
+offset_right = 143.0
+offset_bottom = 37.0
 texture_filter = 1
-texture = ExtResource("3_target_icon")
+texture = SubResource("TargetIcon")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 0
 
 [node name="EnemyCountLabel" type="Label" parent="Root/TopBar"]
+visible = false
 layout_mode = 0
-offset_left = 235.0
-offset_top = 10.0
-offset_right = 348.0
-offset_bottom = 40.0
+offset_left = 150.0
+offset_top = 7.0
+offset_right = 198.0
+offset_bottom = 38.0
 theme_override_colors/font_color = Color(1, 0.55, 0.45, 1)
 theme_override_font_sizes/font_size = 20
-text = "目标  3"
+text = "3"
+horizontal_alignment = 0
+
+[node name="EnemyDigits" type="Control" parent="Root/TopBar"]
+offset_left = 152.0
+offset_top = 5.0
+offset_right = 207.0
+offset_bottom = 41.0
+script = ExtResource("11_pixel_counter")
+digits_atlas = ExtResource("12_digits")
+tint = Color(1, 1, 1, 1)
+value = 3
+
+[node name="HintRibbon" type="TextureRect" parent="Root"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -50.0
+offset_right = 260.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("4_hint")
+
+[node name="RuleRibbon" type="TextureRect" parent="Root"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -86.0
+offset_right = 260.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("4_hint")
+
+[node name="RuleLabel" type="Label" parent="Root"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -82.0
+offset_right = 260.0
+offset_bottom = -54.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.94, 0.89, 0.74, 1)
+theme_override_font_sizes/font_size = 17
+text = "一次出刀，清除全部目标"
+horizontal_alignment = 1
+
+[node name="LevelNotice" type="Label" parent="Root"]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -170.0
+offset_top = 18.0
+offset_right = -24.0
+offset_bottom = 52.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.94, 0.89, 0.74, 1)
+theme_override_font_sizes/font_size = 18
+text = "关卡 1"
 horizontal_alignment = 2
+mouse_filter = 2
 
 [node name="HintLabel" type="Label" parent="Root"]
 layout_mode = 0
@@ -111,7 +234,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 17
-text = "WASD 移动    按住鼠标左键瞄准"
+text = "WASD 移动  ·  按住左键瞄准"
 horizontal_alignment = 1
 
 [node name="DebugStateLabel" type="Label" parent="Root"]
@@ -132,33 +255,52 @@ horizontal_alignment = 2
 visible = false
 layout_mode = 0
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -210.0
-offset_top = -125.0
-offset_right = 210.0
-offset_bottom = 125.0
+anchor_bottom = 1.0
+offset_left = -330.0
+offset_top = -156.0
+offset_right = 330.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
 theme_override_styles/panel = SubResource("ResultStyle")
 
+[node name="ResultDivider" type="TextureRect" parent="Root/ResultPanel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 83.0
+offset_right = 220.0
+offset_bottom = 99.0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("6_divider")
+
 [node name="ResultLabel" type="Label" parent="Root/ResultPanel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 28.0
-offset_right = 390.0
-offset_bottom = 88.0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 220.0
+offset_bottom = 82.0
 theme_override_font_sizes/font_size = 38
 text = "胜 利"
 horizontal_alignment = 1
 
+[node name="ResultTitleArt" type="TextureRect" parent="Root/ResultPanel"]
+offset_left = 37.0
+offset_top = 8.0
+offset_right = 213.0
+offset_bottom = 84.0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("8_victory_title")
+
 [node name="ReasonLabel" type="Label" parent="Root/ResultPanel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 96.0
-offset_right = 390.0
+offset_left = 20.0
+offset_top = 100.0
+offset_right = 224.0
 offset_bottom = 132.0
 theme_override_colors/font_color = Color(0.84, 0.82, 0.88, 1)
 theme_override_font_sizes/font_size = 17
@@ -167,14 +309,42 @@ horizontal_alignment = 1
 
 [node name="RetryButton" type="Button" parent="Root/ResultPanel"]
 layout_mode = 0
-offset_left = 110.0
-offset_top = 158.0
-offset_right = 310.0
-offset_bottom = 211.0
+offset_left = 242.0
+offset_top = 50.0
+offset_right = 408.0
+offset_bottom = 105.0
 focus_neighbor_top = NodePath(".")
 theme_override_colors/font_color = Color(1, 0.88, 0.56, 1)
 theme_override_font_sizes/font_size = 18
-icon = ExtResource("4_retry_icon")
-icon_max_width = 28
-expand_icon = true
-text = "再试一刀  [R]"
+icon = SubResource("RetryIcon")
+icon_max_width = 32
+text = "重新挑战  [R]"
+
+[node name="NextButton" type="Button" parent="Root/ResultPanel"]
+layout_mode = 0
+offset_left = 416.0
+offset_top = 50.0
+offset_right = 530.0
+offset_bottom = 105.0
+theme_override_font_sizes/font_size = 18
+text = "下一关"
+
+[node name="MenuButton" type="Button" parent="Root/ResultPanel"]
+layout_mode = 0
+offset_left = 538.0
+offset_top = 50.0
+offset_right = 630.0
+offset_bottom = 105.0
+theme_override_font_sizes/font_size = 18
+text = "主界面"
+
+[node name="ResultMotion" type="Control" parent="Root/ResultPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+script = ExtResource("10_title_motion")
+focus_buttons = Array[NodePath]([NodePath("../RetryButton"), NodePath("../NextButton"), NodePath("../MenuButton")])

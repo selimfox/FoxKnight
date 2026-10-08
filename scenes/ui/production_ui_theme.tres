@@ -1,0 +1,73 @@
+[gd_resource type="Theme" load_steps=13 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/production/ui/r3_20260930/export/button_states.png" id="1_buttons"]
+[ext_resource type="FontFile" path="res://assets/art/production/fonts/NotoSansCJKsc-Regular.otf" id="2_chinese_font"]
+
+[sub_resource type="AtlasTexture" id="NormalAtlas"]
+atlas = ExtResource("1_buttons")
+region = Rect2(0, 0, 240, 54)
+
+[sub_resource type="AtlasTexture" id="HoverAtlas"]
+atlas = ExtResource("1_buttons")
+region = Rect2(0, 54, 240, 54)
+
+[sub_resource type="AtlasTexture" id="PressedAtlas"]
+atlas = ExtResource("1_buttons")
+region = Rect2(0, 108, 240, 54)
+
+[sub_resource type="AtlasTexture" id="FocusAtlas"]
+atlas = ExtResource("1_buttons")
+region = Rect2(0, 162, 240, 54)
+
+[sub_resource type="AtlasTexture" id="DisabledAtlas"]
+atlas = ExtResource("1_buttons")
+region = Rect2(0, 216, 240, 54)
+
+[sub_resource type="StyleBoxTexture" id="NormalStyle"]
+texture = SubResource("NormalAtlas")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxTexture" id="HoverStyle"]
+texture = SubResource("HoverAtlas")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxTexture" id="PressedStyle"]
+texture = SubResource("PressedAtlas")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+content_margin_top = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxTexture" id="FocusStyle"]
+texture = SubResource("FocusAtlas")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxTexture" id="DisabledStyle"]
+texture = SubResource("DisabledAtlas")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[resource]
+default_font = ExtResource("2_chinese_font")
+Button/colors/font_color = Color(0.91, 0.9, 0.82, 1)
+Button/colors/font_hover_color = Color(1, 0.94, 0.72, 1)
+Button/colors/font_pressed_color = Color(0.85, 0.78, 0.62, 1)
+Button/colors/font_disabled_color = Color(0.57, 0.59, 0.61, 1)
+Button/styles/normal = SubResource("NormalStyle")
+Button/styles/hover = SubResource("HoverStyle")
+Button/styles/pressed = SubResource("PressedStyle")
+Button/styles/focus = SubResource("FocusStyle")
+Button/styles/disabled = SubResource("DisabledStyle")

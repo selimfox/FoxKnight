@@ -1,10 +1,10 @@
 class_name PlayerController
 extends CharacterBody2D
 
-const ARC_FILL_COLOR := Color(1.0, 0.44, 0.08, 0.20)
+const ARC_FILL_COLOR := Color(1.0, 0.44, 0.08, 0.055)
 const ARC_LINE_COLOR := Color(1.0, 0.78, 0.22, 0.96)
 const ARC_OUTLINE_COLOR := Color(1.0, 0.58, 0.14, 0.92)
-const STRAIGHT_FILL_COLOR := Color(0.10, 0.72, 1.0, 0.18)
+const STRAIGHT_FILL_COLOR := Color(0.10, 0.72, 1.0, 0.065)
 const STRAIGHT_LINE_COLOR := Color(0.62, 0.95, 1.0, 0.96)
 const STRAIGHT_OUTLINE_COLOR := Color(0.25, 0.82, 1.0, 0.92)
 const ARC_BOUNDARY_MIN_ALPHA := 0.12
@@ -22,16 +22,12 @@ signal aim_cancel_requested
 @export_range(0.0, 3000.0, 25.0) var deceleration: float = 1800.0
 @export var default_facing: Vector2 = Vector2.RIGHT
 
-@export_category("Prototype Visuals")
-@export var idle_texture: Texture2D
-@export var walk_texture: Texture2D
-@export var ready_texture: Texture2D
-@export var dash_texture: Texture2D
-
 var _input_enabled := true
 var _facing := Vector2.RIGHT
 var _is_attacking := false
 var _is_aiming := false
+var _moving_last_tick := false
+var _transition_pose_until := 0
 var _preview_distance := 0.0
 var _preview_width := 0.0
 var _preview_radius := 0.0
@@ -45,21 +41,27 @@ var _form_switch_feedback_count := 0
 var _form_switch_tween: Tween
 
 @onready var _visual: Node2D = $Visual
-@onready var _sprite: Sprite2D = $Visual/Sprite
+@onready var _sprite: CharacterAnimation = $Visual/Sprite
 @onready var _aim_preview: Node2D = $AimPreview
+@onready var _pixel_range: Node2D = $PixelRange
 @onready var _aim_preview_fill: Polygon2D = $AimPreview/Fill
 @onready var _aim_preview_center: Line2D = $AimPreview/CenterLine
 @onready var _aim_preview_outline: Line2D = $AimPreview/Outline
 @onready var _aim_preview_arc_boundary: Line2D = $AimPreview/ArcBoundaryOutline
 @onready var _aim_preview_form_switch_flash: Line2D = $AimPreview/FormSwitchFlash
 @onready var _form_switch_audio: AudioStreamPlayer = $FormSwitchAudio
+@onready var _form_switch_fx: PixelFXPlayer = $FormSwitchFX
 
 
 func _ready() -> void:
+	# Keep semantic Line2D properties for gameplay/debug queries; pixels render them.
+	_aim_preview_arc_boundary.self_modulate.a = 0.0
+	_aim_preview_form_switch_flash.self_modulate.a = 0.0
 	_facing = default_facing.normalized()
 	if _facing == Vector2.ZERO:
 		_facing = Vector2.RIGHT
 	_update_facing_visual()
+	_set_movement_texture(false)
 
 
 func _physics_process(delta: float) -> void:
@@ -73,7 +75,8 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.move_toward(movement_direction * move_speed, acceleration * delta)
 		if not _is_aiming:
 			_facing = movement_direction
-			_update_facing_visual()
+			# _set_movement_texture below selects the new direction and walk cel.
+			# Switching to idle first on every physics tick restarted walk at frame 0.
 		_set_movement_texture(true)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, deceleration * delta)
@@ -83,6 +86,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	_pixel_range.call("set_boundary", _preview_arc_boundary_radius,
+		_aim_preview_arc_boundary.modulate.a if _aim_preview_arc_boundary.visible else 0.0,
+		_aim_preview_form_switch_flash.modulate.a if _aim_preview_form_switch_flash.visible else 0.0,
+		_aim_preview_form_switch_flash.default_color)
 	if not _aim_preview_arc_boundary.visible:
 		return
 
@@ -166,8 +173,10 @@ func update_straight_aim_preview(
 	_aim_preview.rotation = normalized_direction.angle()
 	_aim_preview_fill.polygon = rectangle
 	_aim_preview_center.points = PackedVector2Array([Vector2.ZERO, Vector2(distance, 0.0)])
-	_aim_preview_center.visible = true
+	_aim_preview_center.visible = false
 	_aim_preview_outline.points = outline
+	_aim_preview_outline.visible = false
+	_pixel_range.call("show_straight", normalized_direction, distance, width)
 	_apply_form_preview_visuals("STRAIGHT", previous_mode, form_threshold_radius)
 	_aim_preview.visible = true
 
@@ -184,6 +193,7 @@ func update_arc_aim_preview(radius: float) -> void:
 	_preview_width = radius * 2.0
 	_preview_radius = radius
 	_preview_mode = "ARC"
+	_update_facing_visual()
 	_aim_preview.rotation = 0.0
 
 	var circle := _build_circle_points(radius)
@@ -194,6 +204,8 @@ func update_arc_aim_preview(radius: float) -> void:
 	_aim_preview_center.points = PackedVector2Array()
 	_aim_preview_center.visible = false
 	_aim_preview_outline.points = outline
+	_aim_preview_outline.visible = false
+	_pixel_range.call("show_arc", radius)
 	_apply_form_preview_visuals("ARC", previous_mode, radius)
 	_aim_preview.visible = true
 
@@ -212,6 +224,8 @@ func set_aim_preview_invalid() -> void:
 	_aim_preview_arc_boundary.modulate = Color(1.0, 1.0, 1.0, ARC_BOUNDARY_MIN_ALPHA)
 	_aim_preview_arc_boundary.visible = false
 	_aim_preview.visible = false
+	_pixel_range.call("clear")
+	_update_facing_visual()
 
 
 func clear_aim_preview() -> void:
@@ -229,7 +243,9 @@ func clear_aim_preview() -> void:
 	_aim_preview_arc_boundary.visible = false
 	_stop_form_switch_flash()
 	_aim_preview.visible = false
+	_pixel_range.call("clear")
 	_update_facing_visual()
+	_set_movement_texture(false)
 
 
 func is_aim_preview_visible() -> bool:
@@ -332,18 +348,21 @@ func _play_form_switch_feedback(mode: String) -> void:
 
 	_aim_preview_form_switch_flash.points = _build_circle_outline(_preview_arc_boundary_radius, 64)
 	_aim_preview_form_switch_flash.default_color = ARC_LINE_COLOR if mode == "ARC" else STRAIGHT_LINE_COLOR
-	_aim_preview_form_switch_flash.scale = Vector2.ONE * 0.96
+	_aim_preview_form_switch_flash.scale = Vector2.ONE
 	_aim_preview_form_switch_flash.modulate = Color.WHITE
 	_aim_preview_form_switch_flash.visible = _preview_arc_boundary_radius > 0.0
+	var points: Array[Vector2] = []
+	for index in 8:
+		points.append(Vector2.from_angle(TAU * float(index) / 8.0) * _preview_arc_boundary_radius)
+	_form_switch_fx.configure(
+		"switch_warm" if mode == "ARC" else "switch_cool",
+		points,
+		true,
+		false
+	)
 
 	_form_switch_tween = create_tween()
 	_form_switch_tween.set_parallel(true)
-	_form_switch_tween.tween_property(
-		_aim_preview_form_switch_flash,
-		"scale",
-		Vector2.ONE * 1.08,
-		FORM_SWITCH_FLASH_DURATION
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_form_switch_tween.tween_property(
 		_aim_preview_form_switch_flash,
 		"modulate",
@@ -365,6 +384,7 @@ func _stop_form_switch_flash() -> void:
 	_aim_preview_form_switch_flash.visible = false
 	_aim_preview_form_switch_flash.scale = Vector2.ONE
 	_aim_preview_form_switch_flash.modulate = Color.WHITE
+	_form_switch_fx.clear()
 
 
 func _build_circle_points(radius: float, segments: int = 40) -> PackedVector2Array:
@@ -390,53 +410,26 @@ func play_attack_pose() -> void:
 func play_straight_attack_pose() -> void:
 	_last_attack_pose = "STRAIGHT"
 	_is_attacking = true
-	_visual.rotation = _facing.angle()
-	_sprite.flip_h = false
-	if ready_texture:
-		_sprite.texture = ready_texture
-
+	_sprite.play("straight", _cardinal_direction(), false, 0.22)
 	var tween := create_tween()
-	tween.tween_interval(0.035)
-	tween.tween_callback(func() -> void:
-		if dash_texture:
-			_sprite.texture = dash_texture
-	)
-	tween.tween_property(_visual, "scale", Vector2(1.25, 0.75), 0.06)
-	tween.tween_property(_visual, "scale", Vector2.ONE, 0.14)
+	tween.tween_interval(0.22)
 	tween.tween_callback(func() -> void:
 		_is_attacking = false
-		_set_movement_texture(false)
-		_update_facing_visual()
+		_sprite.play("post", _cardinal_direction(), false)
 	)
 
 
 func play_arc_attack_pose(attack_duration: float) -> void:
 	_last_attack_pose = "ARC"
 	_is_attacking = true
-	_visual.rotation = 0.0
-	_sprite.flip_h = _facing.x < -0.05
-	if ready_texture:
-		_sprite.texture = ready_texture
-
 	var pose_duration := maxf(attack_duration, 0.12)
-	var spin_tween := create_tween()
-	spin_tween.tween_interval(0.025)
-	spin_tween.tween_callback(func() -> void:
-		if dash_texture:
-			_sprite.texture = dash_texture
-	)
-	spin_tween.tween_property(_visual, "rotation", TAU * 1.12, pose_duration - 0.025).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	spin_tween.tween_callback(func() -> void:
-		_visual.rotation = 0.0
-		_visual.scale = Vector2.ONE
+	_sprite.play("arc", _cardinal_direction(), false, pose_duration)
+	var pose_tween := create_tween()
+	pose_tween.tween_interval(pose_duration)
+	pose_tween.tween_callback(func() -> void:
 		_is_attacking = false
-		_set_movement_texture(false)
-		_update_facing_visual()
+		_sprite.play("post", _cardinal_direction(), false)
 	)
-
-	var squash_tween := create_tween()
-	squash_tween.tween_property(_visual, "scale", Vector2(1.16, 0.84), 0.05).set_trans(Tween.TRANS_QUAD)
-	squash_tween.tween_property(_visual, "scale", Vector2.ONE, pose_duration - 0.05).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func get_last_attack_pose_name() -> String:
@@ -446,13 +439,37 @@ func get_last_attack_pose_name() -> String:
 func _update_facing_visual() -> void:
 	if _is_attacking:
 		return
-	_visual.rotation = 0.0
-	_sprite.flip_h = _facing.x < -0.05
+	_sprite.play(("ready_walk" if _moving_last_tick else "ready") if _is_aiming else "idle", _cardinal_direction())
 
 
 func _set_movement_texture(moving: bool) -> void:
 	if _is_attacking:
 		return
-	var target_texture := walk_texture if moving else idle_texture
-	if target_texture and _sprite.texture != target_texture:
-		_sprite.texture = target_texture
+	if moving:
+		_transition_pose_until = 0
+	elif _moving_last_tick and not _is_aiming:
+		_sprite.play("stop", _cardinal_direction(), false)
+		_transition_pose_until = Time.get_ticks_msec() + 120
+	_moving_last_tick = moving
+	if Time.get_ticks_msec() < _transition_pose_until and not moving:
+		return
+	_sprite.play(("ready_walk" if moving else "ready") if _is_aiming else ("walk" if moving else "idle"), _cardinal_direction())
+
+
+func play_cancel_pose() -> void:
+	_sprite.play("cancel", _cardinal_direction(), false)
+	_transition_pose_until = Time.get_ticks_msec() + 120
+
+
+func _cardinal_direction() -> String:
+	if absf(_facing.x) >= absf(_facing.y):
+		return "side" if _facing.x >= 0.0 else "left"
+	return "front" if _facing.y >= 0.0 else "back"
+
+
+func get_current_animation_frame_texture() -> Texture2D:
+	return _sprite.get_current_frame_texture()
+
+
+func get_visual_foot_anchor_global() -> Vector2:
+	return _sprite.to_global(_sprite.get_frame_foot_anchor())

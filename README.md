@@ -10,10 +10,12 @@ GDD v0.1 阶段已正式结算，当前保留为设计与技术冻结基线；v0
 FoxKnight/
 ├── AGENTS.md                  # 全体 agent 共用规则与任务路由
 ├── .agents/skills/            # 项目 Skills 的 canonical source
+├── .codex/agents/             # 项目级 Codex Agent 调用入口
 ├── agents/
 │   ├── architect.md           # 设计、架构、范围与设计文档治理
 │   ├── coding.md              # Godot 实现、调试、测试与技术文档
-│   └── learning.md            # 学习、调研、验证与能力建设
+│   ├── art.md                 # 视觉设计、资源制作与游戏内表现复核
+│   └── learning.md            # 版本学习、调研、验证与能力建设
 ├── backups/                   # 修改前的安全备份，按原目录分类
 │   ├── root/                  # 根目录文件的备份
 │   └── docs/                  # docs/ 文件的备份
@@ -46,12 +48,17 @@ FoxKnight/
 4. `docs/DecisionLog.md`
 5. `docs/playtest/PrototypeTestLog_v0.1.md`（查阅 v0.1 逐次验收与试玩证据）
 6. `docs/TDD.md`（进入实现、调试或技术审查时阅读）
+7. `docs/ConversationHandoff_2026-09-28.md`（本轮美术迭代状态交接；不替代正式设计文档）
+7. `docs/ConversationHandoff_2026-09-28.md`（本轮美术迭代状态交接；不替代正式设计文档）
 
 使用 agent 工作时，先阅读根目录 `AGENTS.md`，再按任务类型进入相应角色文件：
 
-- 架构、设计与设计文档：`agents/architect.md`
-- 开发、调试与测试：`agents/coding.md`
-- 学习、调研与复盘：`agents/learning.md`
+- 玩法、交互体验与设计文档：`agents/architect.md`
+- Godot 白模、资源接入、调试与测试：`agents/coding.md`
+- 视觉设计、参考研究、美术资源与表现复核：`agents/art.md`
+- 面向创作者的版本学习、专项调研与复盘：`agents/learning.md`
+
+角色职责写在 `agents/`；项目级 Codex 调用入口写在 `.codex/agents/`。多角色交接以 `AGENTS.md` 为准。
 
 ## 文档边界
 

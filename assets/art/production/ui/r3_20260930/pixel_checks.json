@@ -1,0 +1,155 @@
+[
+  {
+    "name": "button_states",
+    "native": [
+      120,
+      135
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "hud_panel_9slice",
+    "native": [
+      32,
+      32
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "result_panel_9slice",
+    "native": [
+      32,
+      32
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "hint_ribbon",
+    "native": [
+      260,
+      18
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "result_divider",
+    "native": [
+      168,
+      8
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "icons_blade_target_retry",
+    "native": [
+      16,
+      48
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "digits_0_to_9",
+    "native": [
+      60,
+      9
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "menu_base",
+    "native": [
+      480,
+      270
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "menu_ornaments",
+    "native": [
+      480,
+      270
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "foxknight_wordmark",
+    "native": [
+      184,
+      40
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "victory_lettering",
+    "native": [
+      88,
+      38
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "failure_lettering",
+    "native": [
+      88,
+      38
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "arc_blade",
+    "native": [
+      720,
+      120
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "straight_blade",
+    "native": [
+      64,
+      36
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "straight_tip",
+    "native": [
+      64,
+      16
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "hit",
+    "native": [
+      64,
+      16
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  },
+  {
+    "name": "death",
+    "native": [
+      64,
+      16
+    ],
+    "exact_2x": true,
+    "hard_alpha": true
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "fox": {
+    "frame_count": 132,
+    "anchor": [
+      24,
+      39
+    ],
+    "palette_count": 20,
+    "native_atlas_size": [
+      288,
+      1728
+    ],
+    "sequences": 36,
+    "hard_alpha": true,
+    "exact_nearest_2x": true,
+    "source_roundtrip": true,
+    "all_multiframe_states_have_distinct_pixels": true,
+    "all_frame_outer_edges_transparent": true,
+    "formerly_clipped_strokes_recovered": []
+  },
+  "soldier": {
+    "frame_count": 60,
+    "anchor": [
+      16,
+      33
+    ],
+    "palette_count": 8,
+    "native_atlas_size": [
+      192,
+      576
+    ],
+    "sequences": 16,
+    "hard_alpha": true,
+    "exact_nearest_2x": true,
+    "source_roundtrip": true,
+    "all_multiframe_states_have_distinct_pixels": true
+  },
+  "portrait": {
+    "native_size": [
+      48,
+      48
+    ],
+    "hard_alpha": true
+  },
+  "visual_acceptance": "Source/contact sheets reviewed; live game review still required. No aesthetic approval inferred."
+}

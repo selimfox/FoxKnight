@@ -18,13 +18,18 @@ enum SlashMode {
 @export_category("Prototype Debug")
 @export var show_slash_hitbox: bool = false
 
-@onready var _visual: Sprite2D = $SlashVisual
 @onready var _debug_line: Line2D = $HitboxDebug
+const ARC_BLADE := preload("res://assets/art/production/fx/revision_20260930/export/arc_blade.png")
+const STRAIGHT_BLADE := preload("res://assets/art/production/fx/revision_20260930/export/straight_blade.png")
+const STRAIGHT_TIP := preload("res://assets/art/production/fx/revision_20260930/export/straight_tip.png")
 
 var _arc_visual_active := false
 var _arc_visual_radius := 0.0
 var _arc_visual_progress := 0.0
 var _execution_visual_language := "NONE"
+var _actual_visual_distance := 0.0
+var _straight_visual_progress := 0.0
+var _query_started := false
 
 
 func execute(
@@ -60,12 +65,14 @@ func _execute_straight(
 
 	await get_tree().physics_frame
 	var hit_count := _query_straight_hits(player, origin, slash_direction, actual_distance)
+	_query_started = true
+	queue_redraw()
 
 	var target := origin + slash_direction * actual_distance
 	var tween := create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(player, "global_position", target, duration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tween.tween_property(_visual, "modulate", Color(0.62, 0.95, 1.0, 0.0), duration).set_trans(Tween.TRANS_QUAD)
+	tween.tween_method(_set_straight_progress, 0.0, 1.0, duration)
 	await tween.finished
 	finished.emit(hit_count)
 	queue_free()
@@ -92,6 +99,7 @@ func _execute_arc(
 		modulate.a = lerpf(1.0, 0.42, progress)
 		queue_redraw()
 		_collect_circle_hits(player, circle, origin, hit_enemies)
+		_query_started = true
 		await get_tree().physics_frame
 		elapsed += get_physics_process_delta_time()
 
@@ -169,11 +177,9 @@ func _query_enemies(player: PlayerController, query_shape: Shape2D, query_transf
 func _configure_straight_visual(actual_distance: float) -> void:
 	_arc_visual_active = false
 	_execution_visual_language = "COOL_STRAIGHT"
-	_visual.visible = true
-	_visual.modulate = Color(0.62, 0.95, 1.0, 0.96)
-	var texture_size := _visual.texture.get_size()
-	_visual.position = Vector2(actual_distance * 0.5, 0.0)
-	_visual.scale = Vector2(actual_distance / texture_size.x, width / texture_size.y)
+	_actual_visual_distance = actual_distance
+	_straight_visual_progress = 0.0
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 	var debug_half_width := width * hitbox_tolerance_multiplier * 0.5
 	_debug_line.points = PackedVector2Array([
@@ -189,28 +195,58 @@ func _configure_straight_visual(actual_distance: float) -> void:
 
 
 func _configure_arc_visual(actual_radius: float) -> void:
-	_visual.visible = false
 	_arc_visual_active = true
 	_execution_visual_language = "WARM_ARC"
 	_arc_visual_radius = actual_radius
 	_arc_visual_progress = 0.0
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_debug_line.points = _build_circle_outline(actual_radius)
 	_debug_line.default_color = Color(1.0, 0.58, 0.14, 0.95)
 	_debug_line.visible = show_slash_hitbox or not is_equal_approx(hitbox_tolerance_multiplier, 1.0)
 	queue_redraw()
 
 
+func _set_straight_progress(progress: float) -> void:
+	_straight_visual_progress = progress
+	queue_redraw()
+
+
 func _draw() -> void:
-	if not _arc_visual_active or _arc_visual_radius <= 0.0:
+	if not _query_started:
 		return
-	var sweep_angle := _arc_visual_progress * TAU * 1.35
-	var blade_start := sweep_angle - PI * 0.72
-	var blade_end := sweep_angle + PI * 0.72
-	draw_arc(Vector2.ZERO, _arc_visual_radius, 0.0, TAU, 64, Color(1.0, 0.62, 0.16, 0.22), 3.0, true)
-	draw_arc(Vector2.ZERO, _arc_visual_radius * 0.82, blade_start, blade_end, 42, Color(1.0, 0.42, 0.08, 0.18), 22.0, true)
-	draw_arc(Vector2.ZERO, _arc_visual_radius * 0.82, blade_start, blade_end, 42, Color(1.0, 0.78, 0.24, 0.92), 10.0, true)
-	draw_arc(Vector2.ZERO, _arc_visual_radius * 0.82, blade_start + 0.08, blade_end - 0.08, 42, Color(1.0, 1.0, 0.82, 0.98), 3.0, true)
-	draw_arc(Vector2.ZERO, _arc_visual_radius * 0.55, blade_start - 0.35, blade_end - 0.9, 28, Color(1.0, 0.68, 0.16, 0.72), 5.0, true)
+	if _arc_visual_active:
+		# The entire actual circle is already live. The bright local blade is an
+		# action trail, never a claim of sequential angular damage activation.
+		draw_colored_polygon(_build_circle_outline(_arc_visual_radius, 96), Color(0.95, 0.65, 0.24, 0.055))
+		var frame := mini(5, int(_arc_visual_progress * 6.0))
+		if is_equal_approx(_arc_visual_radius, 110.0):
+			draw_texture_rect_region(ARC_BLADE, Rect2(-120, -120, 240, 240), Rect2(frame * 240, 0, 240, 240))
+		else:
+			# Parameterized test scenes retain their true radius without stretching
+			# the approved 110px raster into an unrelated-size pixel asset.
+			var angle := _arc_visual_progress * TAU
+			draw_arc(Vector2.ZERO, maxf(0.0, _arc_visual_radius - 2.0), angle - 1.4, angle, 36, Color(1.0, 0.8, 0.44), 2.0, false)
+	else:
+		var fade := 1.0 - _straight_visual_progress
+		var actual_width := width * hitbox_tolerance_multiplier
+		draw_rect(Rect2(0.0, -actual_width * 0.5, _actual_visual_distance, actual_width), Color(0.42, 0.80, 0.88, 0.11 * fade))
+		var frame := mini(3, int(_straight_visual_progress * 4.0))
+		# The authored texture points down. Rotate the draw basis to point along
+		# local +X, then tile/crop without scaling either source dimension.
+		draw_set_transform(Vector2.ZERO, -PI * 0.5)
+		var tip_length := minf(32.0, _actual_visual_distance)
+		var body_length := _actual_visual_distance - tip_length
+		var along := 0.0
+		while along < body_length:
+			var segment := minf(72.0, body_length - along)
+			draw_texture_rect_region(STRAIGHT_BLADE, Rect2(-16.0, along, 32.0, segment), Rect2(frame * 32, 0, 32.0, segment), Color(1, 1, 1, fade))
+			along += segment
+		draw_texture_rect_region(STRAIGHT_TIP, Rect2(-16.0, body_length, 32.0, tip_length), Rect2(frame * 32, 32.0 - tip_length, 32.0, tip_length), Color(1, 1, 1, fade))
+		draw_set_transform(Vector2.ZERO)
+
+
+func has_execution_coverage() -> bool:
+	return _query_started
 
 
 func _build_circle_outline(actual_radius: float, segments: int = 48) -> PackedVector2Array:

@@ -1,0 +1,59 @@
+{
+  "scale": 2,
+  "layout": "horizontal",
+  "arc": {
+    "file": "export/arc_blade.png",
+    "frames": 6,
+    "native_frame": [
+      120,
+      120
+    ],
+    "world_frame": [
+      240,
+      240
+    ],
+    "anchor_world": [
+      120,
+      120
+    ],
+    "radius_world": 110,
+    "duration": 0.22
+  },
+  "straight": {
+    "file": "export/straight_blade.png",
+    "frames": 4,
+    "world_frame": [
+      32,
+      72
+    ],
+    "axis": "down",
+    "duration": 0.22
+  },
+  "tip": {
+    "file": "export/straight_tip.png",
+    "frames": 4,
+    "world_frame": [
+      32,
+      32
+    ],
+    "axis": "down"
+  },
+  "hit": {
+    "file": "export/hit.png",
+    "frames": 4,
+    "world_frame": [
+      32,
+      32
+    ],
+    "duration": 0.09
+  },
+  "death": {
+    "file": "export/death.png",
+    "frames": 4,
+    "world_frame": [
+      32,
+      32
+    ],
+    "duration": 0.18
+  }
+}

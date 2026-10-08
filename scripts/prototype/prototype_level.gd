@@ -1,6 +1,10 @@
 class_name PrototypeLevel
 extends Node2D
 
+signal retry_requested
+signal next_requested
+signal menu_requested
+
 enum RoundState {
 	INITIALIZING,
 	OBSERVING,
@@ -24,6 +28,8 @@ const ARENA_BOUNDS := Rect2(62.0, 72.0, 836.0, 396.0)
 var round_state := RoundState.INITIALIZING
 var attack_committed := false
 var state_history: Array[String] = []
+var campaign_mode := false
+var is_final_level := false
 var _prepared_slash: PrototypeSlash
 var _aim_direction := Vector2.ZERO
 var _aim_distance := 0.0
@@ -47,6 +53,8 @@ func _ready() -> void:
 	_player.aim_released.connect(_on_aim_released)
 	_player.aim_cancel_requested.connect(_on_aim_cancel_requested)
 	_hud.retry_requested.connect(retry)
+	_hud.next_requested.connect(func() -> void: next_requested.emit())
+	_hud.menu_requested.connect(func() -> void: menu_requested.emit())
 	for enemy: EnemyController in _enemies.get_children():
 		enemy.died.connect(_on_enemy_died)
 
@@ -101,6 +109,7 @@ func _on_aim_cancel_requested() -> void:
 
 func _cancel_aim() -> void:
 	_player.clear_aim_preview()
+	_player.play_cancel_pose()
 	_cleanup_prepared_slash()
 	_aim_direction = Vector2.ZERO
 	_aim_distance = 0.0
@@ -143,12 +152,14 @@ func _update_aim(target_position: Vector2) -> void:
 	_aim_valid = true
 	if mouse_distance < effective_arc_radius:
 		_aim_mode = PrototypeSlash.SlashMode.ARC
+		_hud.set_aim_form(true)
 		_aim_direction = Vector2.ZERO
 		_aim_distance = 0.0
 		_player.update_arc_aim_preview(effective_arc_radius)
 		return
 
 	_aim_mode = PrototypeSlash.SlashMode.STRAIGHT
+	_hud.set_aim_form(false)
 	_aim_direction = aim_vector.normalized()
 	_aim_distance = _calculate_allowed_slash_distance(
 		_player.global_position,
@@ -167,6 +178,9 @@ func _update_aim(target_position: Vector2) -> void:
 func _calculate_allowed_slash_distance(origin: Vector2, direction: Vector2, maximum_distance: float) -> float:
 	if maximum_distance <= 0.0 or direction == Vector2.ZERO:
 		return 0.0
+	var arena := get_node_or_null("Arena") as TileArena
+	if arena != null:
+		return arena.get_slash_distance(origin, direction, maximum_distance)
 	var allowed_distance := maximum_distance
 	if direction.x > 0.0:
 		allowed_distance = minf(allowed_distance, (ARENA_BOUNDS.end.x - origin.x) / direction.x)
@@ -205,11 +219,21 @@ func _resolve_round() -> void:
 	var victory := alive_count == 0
 	_set_state(RoundState.RESOLVED)
 	_feedback.play_result(victory)
-	_hud.show_result(victory, alive_count)
+	var survivors: Array[Vector2] = []
+	var survivor_rects: Array[Rect2] = []
+	for enemy in _enemies.get_children():
+		if enemy.has_method("is_alive") and enemy.is_alive():
+			survivors.append(enemy.get_global_transform_with_canvas().origin)
+			var sprite := enemy.get_node("Visual/Sprite") as Sprite2D
+			survivor_rects.append((sprite.get_global_transform_with_canvas() * sprite.get_rect()).grow(8.0))
+	_hud.show_result(victory, alive_count, campaign_mode, is_final_level, survivors, survivor_rects)
 
 
 func retry() -> void:
 	if round_state != RoundState.RESOLVED:
+		return
+	if campaign_mode:
+		retry_requested.emit()
 		return
 	get_tree().reload_current_scene()
 

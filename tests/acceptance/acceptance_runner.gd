@@ -8,7 +8,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	var packed_scene := load("res://scenes/prototype/prototype_level.tscn") as PackedScene
+	var packed_scene := load("res://scenes/prototype/levels/level_01.tscn") as PackedScene
 	_expect(packed_scene != null, "AC-01: Prototype scene loads")
 	if packed_scene == null:
 		_finish()
@@ -29,14 +29,16 @@ func _run() -> void:
 	)
 	_expect(level.is_player_input_enabled(), "AC-01: Player input is enabled while observing")
 
-	var debug_enemy := level.get_node("Actors/Enemies/EnemyA") as EnemyController
-	_expect(not debug_enemy.show_path, "DEBUG-01: Enemy patrol path defaults to hidden")
-	var path_before_move := debug_enemy.get_patrol_path_world_endpoints()
-	var enemy_position_before_check := debug_enemy.global_position
-	debug_enemy.global_position += Vector2(37.0, 19.0)
-	var path_after_move := debug_enemy.get_patrol_path_world_endpoints()
-	_expect(path_after_move == path_before_move, "DEBUG-01: Patrol path remains anchored to spawn origin")
-	debug_enemy.global_position = enemy_position_before_check
+	var debug_enemy := level.get_node("Actors/Enemies/Soldier1") as EnemyController
+	_expect(not debug_enemy.show_path, "DEBUG-01: Soldier chase line defaults to hidden")
+	_expect(debug_enemy.motion_mode == CharacterBody2D.MOTION_MODE_FLOATING, "ENEMY-01: Soldier uses top-down floating motion")
+	var arena := level.get_node("Arena") as TileArena
+	_expect(arena.floor_layer.get_used_cells().size() > 0, "MAP-01: Floor is editable TileMapLayer data")
+	_expect(arena.wall_layer.get_used_cells().size() > 0, "MAP-01: Walls are editable TileMapLayer data")
+	var initial_chase_distance := debug_enemy.global_position.distance_to(level.get_node("Actors/Player").global_position)
+	await physics_frame
+	await physics_frame
+	_expect(debug_enemy.global_position.distance_to(level.get_node("Actors/Player").global_position) < initial_chase_distance, "ENEMY-01: Soldier pursues the fox")
 
 	var player := level.get_node("Actors/Player") as PlayerController
 	var left_press := InputEventMouseButton.new()

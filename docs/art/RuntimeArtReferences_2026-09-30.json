@@ -1,0 +1,202 @@
+{
+  "scope": "all scripts/scenes/tests/production .tres; exact res paths only",
+  "missing": [],
+  "missing_directories": [],
+  "dynamic_directory_prefixes": {
+    "assets/art/production/environment_20260930/": [
+      "scripts/world/integrate_environment_20260930_once.gd"
+    ],
+    "assets/art/production/environment/": [
+      "scripts/world/integrate_environment_20260930_once.gd"
+    ]
+  },
+  "references": {
+    "assets/art/generated/sprites/floor_tile.png": [
+      "scenes/prototype/prototype_level.tscn"
+    ],
+    "assets/art/generated/sprites/wall_tile.png": [
+      "scenes/prototype/prototype_level.tscn"
+    ],
+    "assets/art/production/characters/e_20260930/e_fox_portrait_r4_world2x.png": [
+      "scenes/prototype/campaign.tscn"
+    ],
+    "assets/art/production/characters/e_20260930/fox_world2x.png": [
+      "scenes/actors/player.tscn"
+    ],
+    "assets/art/production/characters/e_20260930/frames.json": [
+      "scenes/actors/enemy.tscn",
+      "scenes/actors/player.tscn",
+      "scripts/visual/character_animation.gd"
+    ],
+    "assets/art/production/characters/e_20260930/soldier_world2x.png": [
+      "scenes/actors/enemy.tscn"
+    ],
+    "assets/art/production/environment/courtyard_decor.png": [
+      "assets/art/production/environment/courtyard_decor_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_decor_20260930_tileset.tres": [
+      "scenes/prototype/levels/level_01.tscn",
+      "scenes/prototype/levels/level_02.tscn",
+      "scenes/prototype/levels/level_03.tscn"
+    ],
+    "assets/art/production/environment/courtyard_decor_tileset.tres": [
+      "scripts/world/author_courtyard_once.gd",
+      "scripts/world/recompose_courtyard_v2_once.gd"
+    ],
+    "assets/art/production/environment/courtyard_edge_decor.png": [
+      "assets/art/production/environment/courtyard_decor_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_fire_pool.png": [
+      "scripts/world/courtyard_moonlight.gd"
+    ],
+    "assets/art/production/environment/courtyard_floor.png": [
+      "assets/art/production/environment/courtyard_floor_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_floor_level_01_tileset.tres": [
+      "scenes/prototype/levels/level_01.tscn"
+    ],
+    "assets/art/production/environment/courtyard_floor_level_02_tileset.tres": [
+      "scenes/prototype/levels/level_02.tscn"
+    ],
+    "assets/art/production/environment/courtyard_floor_level_03_tileset.tres": [
+      "scenes/prototype/levels/level_03.tscn"
+    ],
+    "assets/art/production/environment/courtyard_floor_macro.png": [
+      "assets/art/production/environment/courtyard_floor_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_floor_tileset.tres": [
+      "scripts/world/author_courtyard_once.gd",
+      "scripts/world/recompose_courtyard_v2_once.gd"
+    ],
+    "assets/art/production/environment/courtyard_moon_pool.png": [
+      "scripts/world/courtyard_moonlight.gd"
+    ],
+    "assets/art/production/environment/courtyard_props.png": [
+      "assets/art/production/environment/courtyard_props_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_props_tileset.tres": [
+      "scenes/prototype/levels/level_01.tscn",
+      "scenes/prototype/levels/level_02.tscn",
+      "scenes/prototype/levels/level_03.tscn",
+      "scripts/world/author_courtyard_once.gd",
+      "scripts/world/recompose_courtyard_v2_once.gd"
+    ],
+    "assets/art/production/environment/courtyard_ripple.png": [
+      "scripts/world/water_surface.gd"
+    ],
+    "assets/art/production/environment/courtyard_slab.png": [
+      "assets/art/production/environment/courtyard_floor_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_wall_20260930_tileset.tres": [
+      "scenes/prototype/levels/level_01.tscn",
+      "scenes/prototype/levels/level_02.tscn",
+      "scenes/prototype/levels/level_03.tscn"
+    ],
+    "assets/art/production/environment/courtyard_wall_border.png": [
+      "assets/art/production/environment/courtyard_wall_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_wall_tileset.tres": [
+      "scripts/world/author_courtyard_once.gd"
+    ],
+    "assets/art/production/environment/courtyard_water.png": [
+      "assets/art/production/environment/courtyard_water_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_water_20260930_tileset.tres": [
+      "scenes/prototype/levels/level_01.tscn",
+      "scenes/prototype/levels/level_02.tscn",
+      "scenes/prototype/levels/level_03.tscn"
+    ],
+    "assets/art/production/environment/courtyard_water_macro.png": [
+      "assets/art/production/environment/courtyard_water_tileset.tres"
+    ],
+    "assets/art/production/environment/courtyard_water_tileset.tres": [
+      "scripts/world/author_courtyard_once.gd",
+      "scripts/world/recompose_courtyard_v2_once.gd"
+    ],
+    "assets/art/production/environment_20260930/decor_world2x.png": [
+      "assets/art/production/environment/courtyard_decor_20260930_tileset.tres"
+    ],
+    "assets/art/production/environment_20260930/floor_level_01_world2x.png": [
+      "assets/art/production/environment/courtyard_floor_level_01_tileset.tres"
+    ],
+    "assets/art/production/environment_20260930/floor_level_02_world2x.png": [
+      "assets/art/production/environment/courtyard_floor_level_02_tileset.tres"
+    ],
+    "assets/art/production/environment_20260930/floor_level_03_world2x.png": [
+      "assets/art/production/environment/courtyard_floor_level_03_tileset.tres"
+    ],
+    "assets/art/production/environment_20260930/torch_world2x.png": [
+      "scripts/world/courtyard_moonlight.gd"
+    ],
+    "assets/art/production/environment_20260930/wall_world2x.png": [
+      "assets/art/production/environment/courtyard_wall_20260930_tileset.tres"
+    ],
+    "assets/art/production/environment_20260930/water_mask_world2x.png": [
+      "scripts/world/water_surface.gd"
+    ],
+    "assets/art/production/environment_20260930/water_world2x.png": [
+      "assets/art/production/environment/courtyard_water_20260930_tileset.tres"
+    ],
+    "assets/art/production/fonts/NotoSansCJKsc-Regular.otf": [
+      "scenes/ui/production_ui_theme.tres"
+    ],
+    "assets/art/production/fx/fx_world2x.png": [
+      "scenes/actors/player.tscn",
+      "scripts/feedback/feedback_controller.gd",
+      "tests/acceptance/fx_visual_runner.gd"
+    ],
+    "assets/art/production/fx/revision_20260930/export/arc_blade.png": [
+      "scripts/combat/prototype_slash.gd"
+    ],
+    "assets/art/production/fx/revision_20260930/export/death.png": [
+      "scripts/visual/fx_player.gd"
+    ],
+    "assets/art/production/fx/revision_20260930/export/hit.png": [
+      "scripts/visual/fx_player.gd"
+    ],
+    "assets/art/production/fx/revision_20260930/export/straight_blade.png": [
+      "scripts/combat/prototype_slash.gd"
+    ],
+    "assets/art/production/fx/revision_20260930/export/straight_tip.png": [
+      "scripts/combat/prototype_slash.gd"
+    ],
+    "assets/art/production/ui/r3_20260930/export/button_states.png": [
+      "scenes/ui/production_ui_theme.tres"
+    ],
+    "assets/art/production/ui/r3_20260930/export/digits_0_to_9.png": [
+      "scenes/ui/prototype_hud.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/failure_lettering.png": [
+      "scenes/ui/prototype_hud.tscn",
+      "scripts/ui/prototype_hud.gd"
+    ],
+    "assets/art/production/ui/r3_20260930/export/foxknight_wordmark.png": [
+      "scenes/prototype/campaign.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/hint_ribbon.png": [
+      "scenes/ui/prototype_hud.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/hud_panel_9slice.png": [
+      "scenes/ui/prototype_hud.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/icons_blade_target_retry.png": [
+      "scenes/ui/prototype_hud.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/menu_base.png": [
+      "scenes/prototype/campaign.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/menu_ornaments.png": [
+      "scenes/prototype/campaign.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/result_divider.png": [
+      "scenes/ui/prototype_hud.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/result_panel_9slice.png": [
+      "scenes/ui/prototype_hud.tscn"
+    ],
+    "assets/art/production/ui/r3_20260930/export/victory_lettering.png": [
+      "scenes/ui/prototype_hud.tscn",
+      "scripts/ui/prototype_hud.gd"
+    ]
+  }
+}
