@@ -8,7 +8,7 @@
 - 使用分支：codex/cloud-local-20261009，GDD/TDD v0.1 美术快照。main 是另一条 v0.3 开发线，不要默认选 main。
 - scripts/cloud/setup.sh：固定官方 Godot 4.7.1 Linux x86_64 标准包，核对 SHA512 后安装至 $HOME/.local/bin/godot-4.7.1，不需 sudo。
 - scripts/cloud/check.sh：导入、核心烟测、Campaign 验收；日志在忽略的 output/cloud/。
-- 仓库准备不代表云端环境已经生效。当前可操作网页未登录；尚未创建、发布或实际验收云端环境。本机无可用 Linux/Bash，未执行安装或 Linux 测试。
+- 仓库准备与 Linux 兼容验证已完成：GitHub Actions 的 Ubuntu 22.04 实际安装 Godot 4.7.1、验证重复安装复用、导入项目，并通过核心烟测及 Campaign 验收。证据：https://github.com/selimfox/FoxKnight/actions/runs/37827205534 。这不代表 Codex Cloud 环境已经创建或发布；当前可操作网页未登录，账号侧仍需完成创建与新任务验证。
 
 ## 首次创建环境
 
