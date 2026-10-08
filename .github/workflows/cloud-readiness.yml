@@ -1,0 +1,25 @@
+name: Cloud readiness
+on:
+  push:
+    branches: [codex/cloud-local-20261009]
+    paths:
+      - scripts/cloud/**
+      - .github/workflows/cloud-readiness.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  godot-linux:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out selected project version
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install verified Godot 4.7.1
+        run: bash scripts/cloud/setup.sh
+      - name: Verify installation is reusable
+        run: bash scripts/cloud/setup.sh
+      - name: Import and run core acceptance
+        run: bash scripts/cloud/check.sh
