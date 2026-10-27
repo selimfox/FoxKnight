@@ -1,73 +1,55 @@
-# 狐狸骑士 / 一刀狐狸
+# 狐狸骑士
 
-独立游戏项目。当前游戏设计与开发范围以 `docs/GDD.md` 为准。
+当前设计与开发范围以 [GDD v0.2](docs/GDD.md) 为准。v0.2 已确认设计基线，仍有制作前未决项；功能尚未实现。v0.1 作为历史基线与运行参照保留。
 
-GDD v0.1 阶段已正式结算，当前保留为设计与技术冻结基线；v0.2 范围尚未确认，也尚未建立对应 GDD、TDD 或 Prototype Test Log。
+## 当前入口与运行状态
+
+- 设计：[docs/GDD.md](docs/GDD.md)。
+- 技术：[docs/TDD.md](docs/TDD.md)，进入版本化 [TDD v0.2](docs/TDD_v0.2.md)；技术方案不表示代码已完成。
+- 验证：[Prototype Test Log v0.2](docs/playtest/PrototypeTestLog_v0.2.md)，当前无新版本运行或试玩记录。
+- Godot 入口：根目录 `project.godot`，默认主场景仍为旧版 `scenes/prototype/campaign.tscn`。本次没有切换启动场景或配置新输入。
+- 横版隔离目录已预留，当前只含占位文件；旧版验收、云环境通过和旧包均不能作为 v0.2 验证结果。
+- `docs/GDD.docx` 仍是旧版阅读副本，本轮没有同步；当前设计以 Markdown 为准。
 
 ## 项目结构
 
 ```text
 FoxKnight/
-├── AGENTS.md                  # 全体 agent 共用规则与任务路由
-├── .agents/skills/            # 项目 Skills 的 canonical source
-├── .codex/agents/             # 项目级 Codex Agent 调用入口
-├── agents/
-│   ├── architect.md           # 设计、架构、范围与设计文档治理
-│   ├── coding.md              # Godot 实现、调试、测试与技术文档
-│   ├── art.md                 # 视觉设计、资源制作与游戏内表现复核
-│   └── learning.md            # 版本学习、调研、验证与能力建设
-├── backups/                   # 修改前的安全备份，按原目录分类
-│   ├── root/                  # 根目录文件的备份
-│   └── docs/                  # docs/ 文件的备份
+├── AGENTS.md                 # 共用规则与任务路由
+├── agents/                   # 各角色职责
+├── .agents/skills/           # 项目 Skill 正式来源
+├── .codex/agents/            # 项目 Agent 调用入口
 ├── docs/
-│   ├── OnePaper.md            # 创作者愿景与核心方向，不替代 GDD
-│   ├── GDD.md                 # 当前设计与版本范围
-│   ├── DecisionLog.md         # 重要设计变化及原因
-│   ├── SkillRoadmap.md        # 能力建设与验证计划
-│   ├── TDD.md                 # 当前技术设计入口
-│   ├── TDD_v0.1.md            # v0.1 Prototype 技术实现基线
-│   ├── playtest/              # 与 GDD 版本绑定的 Prototype 测试记录
-│   │   └── PrototypeTestLog_v0.1.md
-│   └── archive/               # 历史文档
-├── scripts/                   # Godot 脚本
-├── assets/
-│   ├── art/                   # 美术资源
-│   └── audio/                 # 音频资源
-└── project.godot              # Godot 项目入口
+│   ├── GDD.md                # 当前设计入口
+│   ├── DecisionLog.md        # 重要变化及原因
+│   ├── TDD.md                # 当前技术入口
+│   ├── TDD_v0.2.md           # 当前技术计划，尚未实现
+│   ├── TDD_v0.1.md           # 历史技术基线
+│   ├── playtest/             # 按版本分开的验证证据
+│   ├── archive/              # 正式历史文档
+│   ├── proposals/            # 讨论过程，不替代当前入口
+│   ├── art/                  # 既有美术记录与证据
+│   ├── OnePaper.md           # 历史愿景材料，不能覆盖当前 GDD
+│   └── SkillRoadmap.md       # 能力建设，不产生开发需求
+├── scenes/sideview/          # 新 Demo 场景预留目录
+├── scripts/sideview/         # 新 Demo 脚本预留目录
+├── assets/sideview/          # 新 Demo 占位资源预留目录
+├── tests/sideview/           # 新 Demo 验证预留目录
+├── backups/                  # 修改前副本，按原目录镜像
+├── build/                    # 可再生成的导出与交付包
+├── export_presets.cfg        # 导出配置，仍须按新版本另行核查
+└── project.godot             # Godot 工程入口
 ```
 
-`docs/GDD.docx` 若存在，只是 `docs/GDD.md` 的阅读和展示副本，不是设计来源。
+其他旧场景、脚本和资源保留现有路径，避免批量迁移破坏引用。目录存在不代表新 Demo 已制作。
 
-## 阅读与协作入口
+## 历史与协作
 
-首次了解项目时，建议依次阅读：
+- 历史设计：[GDD v0.1](docs/archive/GDD_v0.1.md)。
+- 历史证据：[Prototype Test Log v0.1](docs/playtest/PrototypeTestLog_v0.1.md)。
+- 重要变化：[DecisionLog](docs/DecisionLog.md)。
+- 收束过程：[2026-10-28 设计草案](docs/proposals/SideviewDemo_20261028.md)，已由正式 GDD 替代。
 
-1. `README.md`
-2. `docs/OnePaper.md`
-3. `docs/GDD.md`
-4. `docs/DecisionLog.md`
-5. `docs/playtest/PrototypeTestLog_v0.1.md`（查阅 v0.1 逐次验收与试玩证据）
-6. `docs/TDD.md`（进入实现、调试或技术审查时阅读）
-7. `docs/ConversationHandoff_2026-09-28.md`（本轮美术迭代状态交接；不替代正式设计文档）
-7. `docs/ConversationHandoff_2026-09-28.md`（本轮美术迭代状态交接；不替代正式设计文档）
+开始工作先读根 `AGENTS.md`，再按任务读对应 `agents/*.md` 和正式来源。README 只维护入口与目录，不复述玩法规则。
 
-使用 agent 工作时，先阅读根目录 `AGENTS.md`，再按任务类型进入相应角色文件：
-
-- 玩法、交互体验与设计文档：`agents/architect.md`
-- Godot 白模、资源接入、调试与测试：`agents/coding.md`
-- 视觉设计、参考研究、美术资源与表现复核：`agents/art.md`
-- 面向创作者的版本学习、专项调研与复盘：`agents/learning.md`
-
-角色职责写在 `agents/`；项目级 Codex 调用入口写在 `.codex/agents/`。多角色交接以 `AGENTS.md` 为准。
-
-## 文档边界
-
-- One Paper 表达创作者愿景与核心方向，不替代 GDD，也不作为当前版本的制作与验收依据。
-- GDD 描述游戏当前是什么以及当前版本做什么。
-- DecisionLog 解释重要设计为什么发生变化。
-- TDD 记录如何实现已确认设计，不重新定义玩法。
-- Prototype Test Log 按 GDD 版本保存逐次验收与试玩证据，不定义玩法，也不把功能通过等同于体验成立。
-- SkillRoadmap 记录需要学习和验证什么，不产生实现承诺。
-- backups 保存修改前的安全副本；archive 保存正式历史版本，两者不混用。
-- 根 AGENTS 只维护共用规则与路由；角色细则由 `agents/` 下的文件维护。
-- README 只负责项目入口、结构说明和文档索引。
+本轮已在 `codex/sideview-impact-demo` 隔离新设计；未暂存、提交或推送。Git 写入仍遵守项目授权和 safety gate。
